@@ -4,18 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kuiz_app/pages/home/home.dart';
 import 'package:kuiz_app/pages/signup/signup.dart';
+import 'package:kuiz_app/services/database_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
+  
+  
 
-  Future<void> signup({
+  Future<bool?> signup({
     required String email,
     required String password,
     required BuildContext context
   }) async{
     try{
       await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      await sharedPreferences.setString('uid', FirebaseAuth.instance.currentUser!.uid);
+
       await Future.delayed(const Duration(seconds: 1));
-      Navigator.push(context, MaterialPageRoute(builder: (context)=> const Home()));
     }on FirebaseAuthException catch(e){
       String message = '';
       if(e.code == 'weak-password'){
@@ -45,9 +52,12 @@ class AuthService {
   }) async{
     try{
       await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
-      await Future.delayed(const Duration(seconds: 1));
 
-      Navigator.push(context, MaterialPageRoute(builder: (context)=> const Home()));
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      await sharedPreferences.setString('uid', FirebaseAuth.instance.currentUser!.uid);
+
+      await Future.delayed(const Duration(seconds: 1));
+      Navigator.push(context, MaterialPageRoute(builder: (context)=> Home()));
     }on FirebaseAuthException catch(e){
       String message = '';
       if(e.code == 'user-not-found'){
@@ -76,6 +86,9 @@ class AuthService {
     try{
       await FirebaseAuth.instance.signOut();
       await Future.delayed(const Duration(seconds: 1));
+
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      await sharedPreferences.remove('uid');
       Navigator.push(context, MaterialPageRoute(builder: (context)=> Signup()));
     }on FirebaseAuthException catch(e){
 

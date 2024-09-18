@@ -49,7 +49,7 @@ class Login extends StatelessWidget {
             children: [
               Center(
                 child: Text(
-                  'Hello Again',
+                  'Olá novamente!',
                   style: GoogleFonts.raleway(
                       textStyle: const TextStyle(
                           color: Colors.black,
@@ -87,12 +87,12 @@ class Login extends StatelessWidget {
               )
           ),
         ),
-        const SizedBox(height: 16,),
+        const SizedBox(height: 8,),
         TextField(
           controller: _emailController,
           decoration: InputDecoration(
               filled: true,
-              hintText: 'mahdiforwork@gmail.com',
+              hintText: 'Digite aqui seu email',
               hintStyle: const TextStyle(
                   color: Color(0xff6A6A6A),
                   fontWeight: FontWeight.normal,
@@ -124,11 +124,12 @@ class Login extends StatelessWidget {
               )
           ),
         ),
-        const SizedBox(height: 16,),
+        const SizedBox(height: 8,),
         TextField(
           obscureText: true,
           controller: _passwordController,
           decoration: InputDecoration(
+              hintText: 'Digite aqui sua senha',
               filled: true,
               fillColor: const Color(0xffF7F7F9) ,
               border: OutlineInputBorder(
@@ -158,7 +159,7 @@ class Login extends StatelessWidget {
             context: context
         );
       },
-      child: const Text("Sign In"),
+      child: const Text("Log In", style: TextStyle(color: Colors.white),),
     );
   }
 
@@ -170,7 +171,7 @@ class Login extends StatelessWidget {
           text: TextSpan(
               children: [
                 const TextSpan(
-                  text: "New User? ",
+                  text: "É novo por essas bandas? ",
                   style: TextStyle(
                       color: Color(0xff6A6A6A),
                       fontWeight: FontWeight.normal,
@@ -178,7 +179,7 @@ class Login extends StatelessWidget {
                   ),
                 ),
                 TextSpan(
-                    text: "Create Account",
+                    text: "Clique aqui",
                     style: const TextStyle(
                         color: Color(0xff1A1D1E),
                         fontWeight: FontWeight.normal,

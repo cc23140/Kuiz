@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:kuiz_app/pages/home/home.dart';
 import 'package:kuiz_app/pages/signup/signup.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'firebase_options.dart';
 
@@ -9,13 +12,20 @@ void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform
   );
-  runApp(MaterialApp(debugShowCheckedModeBanner:false,home:Signup()));
+  FirebaseFirestore.instance.settings = const Settings(
+    persistenceEnabled:true,
+  );
+
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  final uid = sharedPreferences.get('uid');
+  runApp(MaterialApp(debugShowCheckedModeBanner:false,home: uid != null ? Home() : Signup()));
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

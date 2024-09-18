@@ -1,10 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:kuiz_app/models/user_model.dart';
 import 'package:kuiz_app/pages/login/login.dart';
 import 'package:kuiz_app/services/auth_service.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kuiz_app/services/database_service.dart';
 
 import '../../services/auth_service.dart';
+import '../home/home.dart';
 import '../login/login.dart';
 
 class Signup extends StatelessWidget {
@@ -12,6 +16,9 @@ class Signup extends StatelessWidget {
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+
+  final _databaseService = DatabaseService();
 
   @override
   Widget build(BuildContext context) {
@@ -31,17 +38,43 @@ class Signup extends StatelessWidget {
               children: [
                 Center(
                   child: Text(
-                    'Register Account',
+                    'Olá,',
                     style: GoogleFonts.raleway(
                         textStyle: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
-                            fontSize: 32
+                            fontSize: 24
+                        )
+                    ),
+                  ),
+                ),
+                Center(
+                  child: Text(
+                    'bem-vindo ao Kuiz',
+                    style: GoogleFonts.raleway(
+                        textStyle: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30
+                        )
+                    ),
+                  ),
+                ),
+                Center(
+                  child: Text(
+                    '-seu app de criação de quizzes',
+                    style: GoogleFonts.raleway(
+                        textStyle: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16
                         )
                     ),
                   ),
                 ),
                 const SizedBox(height: 80,),
+                _username(),
+                const SizedBox(height: 20,),
                 _emailAddress(),
                 const SizedBox(height: 20,),
                 _password(),
@@ -55,13 +88,50 @@ class Signup extends StatelessWidget {
     );
   }
 
+  Widget _username(){
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+            'Nome de usuário',
+            style: GoogleFonts.raleway(
+              textStyle: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.normal,
+                fontSize: 16
+              )
+            ),
+        ),
+        const SizedBox(height: 8,),
+        TextField(
+          controller: _usernameController,
+          decoration: InputDecoration(
+            filled: true,
+            hintText: 'Digite seu nome de usuário aqui',
+            hintStyle: const TextStyle(
+              color: Color(0xff6A6A6A),
+              fontWeight: FontWeight.normal,
+              fontSize: 14
+            ),
+            fillColor: const Color(0xffF7F7F9) ,
+            border: OutlineInputBorder(
+                borderSide: BorderSide.none,
+                borderRadius: BorderRadius.circular(14)
+            )
+          ),
+        )
+      ],
+    );
+  }
+
   Widget _emailAddress() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Email Address',
+          'Email',
           style: GoogleFonts.raleway(
               textStyle: const TextStyle(
                   color: Colors.black,
@@ -70,12 +140,12 @@ class Signup extends StatelessWidget {
               )
           ),
         ),
-        const SizedBox(height: 16,),
+        const SizedBox(height: 8,),
         TextField(
           controller: _emailController,
           decoration: InputDecoration(
               filled: true,
-              hintText: 'mahdiforwork@gmail.com',
+              hintText: 'Digite seu email aqui',
               hintStyle: const TextStyle(
                   color: Color(0xff6A6A6A),
                   fontWeight: FontWeight.normal,
@@ -107,7 +177,7 @@ class Signup extends StatelessWidget {
               )
           ),
         ),
-        const SizedBox(height: 16,),
+        const SizedBox(height: 8,),
         TextField(
           controller: _passwordController,
           obscureText: true,
@@ -128,6 +198,7 @@ class Signup extends StatelessWidget {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xff0D6EFD),
+        foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
         ),
@@ -135,13 +206,20 @@ class Signup extends StatelessWidget {
         elevation: 0,
       ),
       onPressed: () async {
-        await AuthService().signup(
+        bool? response = await AuthService().signup(
             email: _emailController.text,
             password: _passwordController.text,
             context: context
         );
+        if(bool == null) {
+          return;
+        }
+
+        _databaseService.addUser(UserKuiz(uid: FirebaseAuth.instance.currentUser!.uid,
+            username: _usernameController.text,
+            completedQuizzes: 0));
       },
-      child: const Text("Sign Up"),
+      child: const Text("Cadastrar"),
     );
   }
 
@@ -153,7 +231,7 @@ class Signup extends StatelessWidget {
           text: TextSpan(
               children: [
                 const TextSpan(
-                  text: "Already Have Account? ",
+                  text: "Já está com a gente? ",
                   style: TextStyle(
                       color: Color(0xff6A6A6A),
                       fontWeight: FontWeight.normal,
@@ -161,7 +239,7 @@ class Signup extends StatelessWidget {
                   ),
                 ),
                 TextSpan(
-                    text: "Log In",
+                    text: "Entre por aqui",
                     style: const TextStyle(
                         color: Color(0xff1A1D1E),
                         fontWeight: FontWeight.normal,

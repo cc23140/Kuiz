@@ -1,13 +1,16 @@
+import 'package:kuiz_app/models/user_model.dart';
 import 'package:kuiz_app/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kuiz_app/services/database_service.dart';
 
 import '../../services/auth_service.dart';
 
 class Home extends StatelessWidget {
-  const Home({super.key});
+  Home({super.key});
 
+  final _databaseService = DatabaseService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,6 +32,7 @@ class Home extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10,),
+              _username(_databaseService, context),
               Text(
                 FirebaseAuth.instance.currentUser!.email!.toString(),
                 style: GoogleFonts.raleway(
@@ -64,4 +68,23 @@ class Home extends StatelessWidget {
       child: const Text("Sign Out"),
     );
   }
+}
+
+Widget _username(DatabaseService _databaseService, BuildContext context) {
+  return FutureBuilder<UserKuiz>(future: _databaseService.getUser(uid: FirebaseAuth.instance.currentUser!.uid),
+      builder: (context, snapshot){
+        if(snapshot.connectionState == ConnectionState.waiting){
+          return CircularProgressIndicator();
+        }
+        else if(snapshot.hasError){
+          return Text('Erro ${snapshot.error}');
+        }
+        else if(!snapshot.hasData || snapshot.data == null){
+          return Text('Erro');
+        }
+
+        final user = snapshot.data!;
+
+        return Text(user.username);
+      });
 }
