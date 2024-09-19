@@ -1,13 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kuiz_app/pages/login/login.dart';
 import 'package:kuiz_app/pages/signup/signup.dart';
 import 'package:kuiz_app/services/auth_service.dart';
+import 'package:kuiz_app/services/database_service.dart';
+import 'package:async/async.dart';
+import 'package:kuiz_app/widgets/card_widget.dart';
+import 'package:kuiz_app/models/quiz_model.dart';
+
+import '../../models/user_model.dart';
 
 class HomeScreen extends StatelessWidget {
 
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
 
+  final _databaseService = DatabaseService();
 
 
   @override
@@ -24,6 +32,32 @@ class HomeScreen extends StatelessWidget {
                   );
                 }
             )
+        ),
+        body: Column(
+          textDirection: TextDirection.ltr,
+          children: [
+            const Text(
+              'Quizzes criados',
+              style: TextStyle(
+                fontSize: 28
+              ),
+            ),
+            // SizedBox(
+            //   height: 200,
+            //   width: MediaQuery.sizeOf(context).width,
+            //   child: _buildCreatedQuizzes(context, _databaseService),
+            // ),
+
+            const Text(
+              'Quizzes da comunidade'
+            ),
+
+            SizedBox(
+              height: 200,
+              width: MediaQuery.sizeOf(context).width,
+              child: _buildGeneralQuizzes(context, _databaseService),
+            )
+          ],
         ),
         drawer: Drawer(
             child: ListView(
@@ -65,4 +99,68 @@ class HomeScreen extends StatelessWidget {
         )
     );
   }
+}
+
+
+Widget _buildCreatedQuizzes(BuildContext context, DatabaseService _databaseService){
+  return StreamBuilder(stream: _databaseService.getCreatedQuizzes(uid: FirebaseAuth.instance.currentUser!.uid),
+      builder: (context, snapshot) {
+        if(snapshot.connectionState == ConnectionState.waiting){
+          return const CircularProgressIndicator();
+        }
+        else if(snapshot.hasError){
+          return Text('Um erro ocorreu!');
+        }
+        else if(!snapshot.hasData || snapshot.data == null){
+          return const Text('Você não criou nenhum quiz');
+        }
+
+        return ListView.builder(
+          scrollDirection: Axis.horizontal,
+            physics: const ScrollPhysics(),
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index){
+              final quiz = snapshot.data!.docs[index].data() as Quiz;
+              return CardWidget(
+                  title: quiz.title,
+                  creatorUsername: (_databaseService.getUser(uid: quiz.uid) as UserKuiz).username,
+                  image: quiz.image
+              );
+            }
+        );
+      }
+  );
+}
+
+Widget _buildGeneralQuizzes(BuildContext context, DatabaseService _databaseService){
+  return StreamBuilder(stream: _databaseService.getGeneralQuizzes(),
+      builder: (context, snapshot){
+        if(snapshot.connectionState == ConnectionState.waiting){
+          return const CircularProgressIndicator();
+        }
+        else if(snapshot.hasError){
+          return Text('Erro: ${snapshot.error}');
+        }
+        else if(!snapshot.hasData || snapshot.data == null){
+          return const Text('Não há quizzes gerais');
+        }
+        return ListView.builder(itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index){
+              final quiz = snapshot.data!.docs[index].data() as Quiz;
+              return FutureBuilder(future: _databaseService.getUser(uid: quiz.uid),
+                      builder: (context, userSnapshot){
+                        if(userSnapshot.connectionState == ConnectionState.waiting){
+                          return const CircularProgressIndicator();
+                        }
+                        else if(userSnapshot.hasError || !userSnapshot.hasData || userSnapshot.data == null){
+                          return const Text('Ve oq deu errado aí');
+                        }
+                        final user = userSnapshot!.data! as UserKuiz;
+                        return CardWidget(title: quiz.title, creatorUsername: user.username, image: quiz.image);
+                      }
+                  );
+            }
+        );
+      }
+  );
 }

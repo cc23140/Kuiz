@@ -19,7 +19,7 @@ class Quiz{
       this(
         uid:json['uid']! as String,
         title:json['title']! as String,
-        image:json['ímage']! as String,
+        image:json['image']! as String,
         public:json['public']! as bool,
         questionsAmount:json['questionsAmount']! as int,
         shareCode:json['shareCode']! as String

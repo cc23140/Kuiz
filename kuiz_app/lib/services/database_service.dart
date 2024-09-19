@@ -50,6 +50,31 @@ class DatabaseService {
 
 
   //QUIZ
+
+  Stream<QuerySnapshot?> getCreatedQuizzes({required String uid}) {
+    return _quizzesRef.limit(7).where('uid', isEqualTo: uid).snapshots();
+  }
+
+  Stream<QuerySnapshot?> getGeneralQuizzes(){
+    return _quizzesRef.limit(10).where('public', isEqualTo: true).snapshots();
+  }
+
+  Future<List<QueryDocumentSnapshot?>?> getSearchQuizzes({required String title}) async{
+    final querySnapshot = await _quizzesRef.where('title', isEqualTo: title).where('public', isEqualTo: true).get();
+
+    if(querySnapshot.docs.isNotEmpty){
+      return querySnapshot.docs.toList();
+    }
+  }
+
+
+  Future<Quiz?> getQuizByCode({required String shareCode}) async{
+    final querySnapshots = await _quizzesRef.where('shareCode', isEqualTo: shareCode).get();
+
+    if(querySnapshots.docs.isNotEmpty){
+      return querySnapshots.docs.first as Quiz;
+    }
+  }
   
 
 }

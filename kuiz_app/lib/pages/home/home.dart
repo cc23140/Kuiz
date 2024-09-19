@@ -74,7 +74,7 @@ Widget _username(DatabaseService _databaseService, BuildContext context) {
   return FutureBuilder<UserKuiz>(future: _databaseService.getUser(uid: FirebaseAuth.instance.currentUser!.uid),
       builder: (context, snapshot){
         if(snapshot.connectionState == ConnectionState.waiting){
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         }
         else if(snapshot.hasError){
           return Text('Erro ${snapshot.error}');
