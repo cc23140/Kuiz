@@ -32,7 +32,7 @@ class CardWidget extends StatelessWidget {
         children: [
           Expanded(
             flex: 3,
-            child: Image.asset(image),
+            child: Image.network(image),
           ),
           Expanded(
             flex: 2,
