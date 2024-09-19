@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../models/quiz_model.dart';
 import '../models/user_model.dart';
 
 const String USER_COLLECTION_REF = 'users';
@@ -11,14 +12,23 @@ class DatabaseService {
 
   late final CollectionReference _usersRef;
 
+  late final CollectionReference _quizzesRef;
+
   DatabaseService(){
     _usersRef = _firestore.collection(USER_COLLECTION_REF).withConverter<UserKuiz>(
         fromFirestore: (snapshots, _) => UserKuiz.fromJSON(snapshots.data()!,),
         toFirestore: (user, _) => user.toJSON()
     );
 
+    _quizzesRef = _firestore.collection(QUIZ_COLLECTION_REF).withConverter<Quiz>(
+        fromFirestore: (snapshots, _) => Quiz.fromJSON(snapshots.data()!),
+        toFirestore: (quiz, _) => quiz.toJSON()
+    );
+
   }
 
+
+  //USER
 
   Stream<QuerySnapshot?> getUsers(){
     return _usersRef.snapshots();
@@ -37,4 +47,9 @@ class DatabaseService {
   void addUser(UserKuiz user) async{
     _usersRef.add(user);
   }
+
+
+  //QUIZ
+  
+
 }

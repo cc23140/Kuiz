@@ -186,12 +186,7 @@ class Login extends StatelessWidget {
                         fontSize: 16
                     ),
                     recognizer: TapGestureRecognizer()..onTap = () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Signup()
-                        ),
-                      );
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> Signup()));
                     }
                 ),
               ]

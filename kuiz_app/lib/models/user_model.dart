@@ -29,7 +29,7 @@ class UserKuiz {
     );
   }
 
-  Map<String, Object?> toJSON(){
+  Map<String, dynamic> toJSON(){
     return {
       'uid':this.uid,
       'username':this.username,

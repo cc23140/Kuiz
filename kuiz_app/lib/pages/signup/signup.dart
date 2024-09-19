@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kuiz_app/models/user_model.dart';
+import 'package:kuiz_app/pages/home/home_screen.dart';
 import 'package:kuiz_app/pages/login/login.dart';
 import 'package:kuiz_app/services/auth_service.dart';
 import 'package:flutter/gestures.dart';
@@ -218,6 +219,8 @@ class Signup extends StatelessWidget {
         _databaseService.addUser(UserKuiz(uid: FirebaseAuth.instance.currentUser!.uid,
             username: _usernameController.text,
             completedQuizzes: 0));
+
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
       },
       child: const Text("Cadastrar"),
     );
