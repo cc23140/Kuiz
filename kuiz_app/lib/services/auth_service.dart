@@ -7,6 +7,8 @@ import 'package:kuiz_app/pages/signup/signup.dart';
 import 'package:kuiz_app/services/database_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../pages/home/home_screen.dart';
+
 class AuthService {
   
   
@@ -57,7 +59,7 @@ class AuthService {
       await sharedPreferences.setString('uid', FirebaseAuth.instance.currentUser!.uid);
 
       await Future.delayed(const Duration(seconds: 1));
-      Navigator.push(context, MaterialPageRoute(builder: (context)=> Home()));
+      Navigator.push(context, MaterialPageRoute(builder: (context)=> HomeScreen()));
     }on FirebaseAuthException catch(e){
       String message = '';
       if(e.code == 'user-not-found'){

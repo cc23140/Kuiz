@@ -25,7 +25,7 @@ class HomeScreen extends StatelessWidget {
             leading: Builder(
                 builder: (context) {
                   return IconButton(
-                      icon: const Icon(Icons.menu),
+                      icon: const Icon(Icons.menu, size: 40,),
                       onPressed: () {
                         Scaffold.of(context).openDrawer();
                       }
@@ -42,18 +42,18 @@ class HomeScreen extends StatelessWidget {
                 fontSize: 28
               ),
             ),
-            // SizedBox(
-            //   height: 200,
-            //   width: MediaQuery.sizeOf(context).width,
-            //   child: _buildCreatedQuizzes(context, _databaseService),
-            // ),
+            SizedBox(
+              height: 225,
+              width: MediaQuery.sizeOf(context).width,
+              child: _buildCreatedQuizzes(context, _databaseService),
+            ),
 
             const Text(
               'Quizzes da comunidade'
             ),
 
             SizedBox(
-              height: 200,
+              height: 225,
               width: MediaQuery.sizeOf(context).width,
               child: _buildGeneralQuizzes(context, _databaseService),
             )
@@ -115,19 +115,30 @@ Widget _buildCreatedQuizzes(BuildContext context, DatabaseService _databaseServi
           return const Text('Você não criou nenhum quiz');
         }
 
-        return ListView.builder(
+        return snapshot.data!.docs.isNotEmpty ? ListView.builder(
           scrollDirection: Axis.horizontal,
             physics: const ScrollPhysics(),
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index){
               final quiz = snapshot.data!.docs[index].data() as Quiz;
-              return CardWidget(
-                  title: quiz.title,
-                  creatorUsername: (_databaseService.getUser(uid: quiz.uid) as UserKuiz).username,
-                  image: quiz.image
-              );
+              return FutureBuilder(future: _databaseService.getUser(uid: quiz.uid),
+                  builder: (context, userSnapshot){
+                    if(userSnapshot.connectionState == ConnectionState.waiting){
+                    return const CircularProgressIndicator();
+                    }
+                    else if(userSnapshot.hasError || !userSnapshot.hasData || userSnapshot.data == null){
+                    return const Text('Ve oq deu errado aí');
+                    }
+                    final user = userSnapshot!.data! as UserKuiz;
+                    return CardWidget(title: quiz.title, creatorUsername: user.username, image: quiz.image);
+
+                  });
             }
-        );
+        ) : Container(alignment: Alignment.center,
+        child: Text(
+          "Você ainda não criou um quiz",
+          style: TextStyle(fontSize: 14),)
+          ,);
       }
   );
 }
@@ -145,6 +156,7 @@ Widget _buildGeneralQuizzes(BuildContext context, DatabaseService _databaseServi
           return const Text('Não há quizzes gerais');
         }
         return ListView.builder(itemCount: snapshot.data!.docs.length,
+            scrollDirection: Axis.horizontal,
             itemBuilder: (context, index){
               final quiz = snapshot.data!.docs[index].data() as Quiz;
               return FutureBuilder(future: _databaseService.getUser(uid: quiz.uid),
