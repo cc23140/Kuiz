@@ -45,7 +45,9 @@ class SearchScreen extends StatelessWidget {
                     });
                 }
             );
-          })
+          }),
+      drawer: HomeScreenFunctions.buildAppDrawer(context),
+        
     );
   }
 }

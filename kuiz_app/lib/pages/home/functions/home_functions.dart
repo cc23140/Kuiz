@@ -4,8 +4,11 @@ import "package:kuiz_app/pages/home/search_screen.dart";
 
 import "../../../models/quiz_model.dart";
 import "../../../models/user_model.dart";
+import "../../../services/auth_service.dart";
 import "../../../services/database_service.dart";
 import "../../../widgets/card_widget.dart";
+import "../../creation/creation_quiz_screen.dart";
+import "../../login/login.dart";
 
 class HomeScreenFunctions {
   static PreferredSizeWidget buildAppBar(BuildContext context, TextEditingController _searchController){
@@ -128,6 +131,57 @@ class HomeScreenFunctions {
               }
           );
         }
+    );
+
+
+  }
+
+  static Widget buildAppDrawer(BuildContext context){
+    return Drawer(
+        child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              const DrawerHeader(
+                  decoration: BoxDecoration(
+                      color: Colors.blue
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.settings),
+                      Text('Configurações'),
+                    ],
+                  )
+
+              ),
+
+              const ListTile(
+                  title: const Text('Conta')
+              ),
+              ListTile(
+                title: const Text('Acessar perfil'),
+                onTap: () {
+                  ///TODO
+                },
+                trailing: const Icon(Icons.person),
+              ),
+              ListTile(
+                title: const Text('Criar quiz'),
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=> CreationQuizScreen()));
+                },
+                trailing: const Icon(Icons.create),
+              ),
+              SizedBox(height: MediaQuery.sizeOf(context).height * 0.4,),
+              ListTile(
+                title: Text('Sair da conta'),
+                leading: Icon(Icons.exit_to_app),
+                onTap: (){
+                  AuthService().signout(context: context);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Login()));
+                },
+              )
+            ]
+        )
     );
   }
 }
