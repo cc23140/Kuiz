@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kuiz_app/models/question_model.dart';
 import 'package:kuiz_app/services/database_service.dart';
 
 class CreationQuizScreen extends StatefulWidget {
@@ -14,6 +15,8 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
   final TextEditingController _titleController = TextEditingController();
 
   final TextEditingController _linkImgController = TextEditingController();
+
+  List<List<Question>> questions = <List<Question>>[];
 
   bool isPublic = true;
 
@@ -67,25 +70,44 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  TextButton(onPressed: (){
-                    setState(() {
-                      isPublic = true;
-                    });
+                  Container(margin: EdgeInsets.all(10),
+                    child: TextButton(onPressed: (){
+                      setState(() {
+                        isPublic = true;
+                      });
 
-                  },
-                    style: isPublic ? ButtonStyle() : ButtonStyle(),
-                    child: const Text('Público')),
+                    },
+                        style: isPublic ? ButtonStyle(padding: WidgetStatePropertyAll(EdgeInsets.all(5)), backgroundColor: WidgetStateProperty.all(Colors.blue[700]), foregroundColor: WidgetStatePropertyAll(Colors.white),) : ButtonStyle(foregroundColor: WidgetStatePropertyAll(Colors.black), padding: WidgetStatePropertyAll(EdgeInsets.all(5))),
+                        child: const Text('Público')),),
 
-                  TextButton(onPressed: (){
-                    setState(() {
+                  Container(margin: EdgeInsets.all(10),
+                    child: TextButton(onPressed: (){
+                      setState(() {
                         isPublic = false;
                       });
                     },
-                    style: isPublic ? ButtonStyle() : ButtonStyle(),
-                    child: const Text('Privado'))
+                        style: isPublic ? ButtonStyle(foregroundColor: WidgetStatePropertyAll(Colors.black), padding: WidgetStatePropertyAll(EdgeInsets.all(5))) : ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.blue[700]), foregroundColor: WidgetStatePropertyAll(Colors.white), padding: WidgetStatePropertyAll(EdgeInsets.all(5))),
+                        child: const Text('Privado')),
+                  )
                 ],
             ),
-          )
+          ),
+          const SizedBox(height: 50,),
+
+          ListView(
+            scrollDirection: Axis.vertical,
+            children: [
+              //Iterar por toda a lista de questoes!
+              IconButton(
+                  onPressed: (){
+
+                  },
+                  icon: const Icon(Icons.plus_one))
+            ],
+          ),
+
+          const SizedBox(height: 50,)
+
 
 
         ],

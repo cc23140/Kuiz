@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../models/question_model.dart';
 import '../models/quiz_model.dart';
 import '../models/user_model.dart';
 
 const String USER_COLLECTION_REF = 'users';
 const String QUIZ_COLLECTION_REF = 'quizzes';
+const String QUESTIONS_COLLECTION_REF = 'questions';
 
 class DatabaseService {
   final _firestore = FirebaseFirestore.instance;
@@ -13,6 +15,8 @@ class DatabaseService {
   late final CollectionReference _usersRef;
 
   late final CollectionReference _quizzesRef;
+
+  late final CollectionReference _questionsRef;
 
   DatabaseService(){
     _usersRef = _firestore.collection(USER_COLLECTION_REF).withConverter<UserKuiz>(
@@ -23,6 +27,11 @@ class DatabaseService {
     _quizzesRef = _firestore.collection(QUIZ_COLLECTION_REF).withConverter<Quiz>(
         fromFirestore: (snapshots, _) => Quiz.fromJSON(snapshots.data()!),
         toFirestore: (quiz, _) => quiz.toJSON()
+    );
+
+    _questionsRef = _firestore.collection(QUESTIONS_COLLECTION_REF).withConverter<Question>(
+        fromFirestore: (snapshots, _) => Question.fromJSON(snapshots.data()!),
+        toFirestore: (question, _) => question.toJSON()
     );
 
   }
@@ -61,17 +70,12 @@ class DatabaseService {
   
   Stream<QuerySnapshot?> getSearchedQuizzes({required String searchStr}){
     searchStr = searchStr.toLowerCase();
-    return _quizzesRef.limit(10).where('public', isEqualTo: true).orderBy('title').startAt([searchStr]).endAt(['$searchStr\uf8ff']).snapshots();
+    ///TODO
+    return _quizzesRef.where('public', isEqualTo: true).orderBy('title').startAt(['Filo']).endAt(['Filo']).limit(10)
+        .snapshots();
+
+        
   }
-
-  Future<List<QueryDocumentSnapshot?>?> getSearchQuizzes({required String title}) async{
-    final querySnapshot = await _quizzesRef.where('title', isEqualTo: title).where('public', isEqualTo: true).get();
-
-    if(querySnapshot.docs.isNotEmpty){
-      return querySnapshot.docs.toList();
-    }
-  }
-
 
   Future<Quiz?> getQuizByCode({required String shareCode}) async{
     final querySnapshots = await _quizzesRef.where('shareCode', isEqualTo: shareCode).get();
@@ -81,5 +85,11 @@ class DatabaseService {
     }
   }
   
+  
+  //QUESTION
+
+  Stream<QuerySnapshot?> getQuestionsByQuizId({required String quizId}){
+    return _questionsRef.where('quizId', isEqualTo: quizId).snapshots();
+  }
 
 }

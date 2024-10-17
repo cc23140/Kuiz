@@ -1,5 +1,6 @@
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
+import "package:kuiz_app/pages/home/home_screen.dart";
 import "package:kuiz_app/pages/home/search_screen.dart";
 
 import "../../../models/quiz_model.dart";
@@ -32,6 +33,7 @@ class HomeScreenFunctions {
             height: 40,
             child: TextField(
               controller: _searchController,
+              maxLines: 1,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5)
@@ -42,11 +44,12 @@ class HomeScreenFunctions {
                 ),
                 suffixIcon: IconButton(
                   onPressed: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen(searchController: _searchController)));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen(searchController: _searchController)));
                   },
                   icon: Icon(Icons.search, size: 20)  ,
                 ),
                 suffixIconColor: Colors.grey,
+                isDense: true
               ),
               style: TextStyle(
                   height: 1
