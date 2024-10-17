@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kuiz_app/models/alternative_model.dart';
 import 'package:kuiz_app/models/question_model.dart';
 import 'package:kuiz_app/services/database_service.dart';
 
@@ -16,7 +17,13 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
 
   final TextEditingController _linkImgController = TextEditingController();
 
-  List<List<Question>> questions = <List<Question>>[];
+  final _formKey = GlobalKey<FormState>();
+
+  List<Question> questions = <Question>[];
+
+  List<TextEditingController> listOfController = <TextEditingController>[];
+
+
 
   bool isPublic = true;
 
@@ -96,17 +103,31 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
 
           ListView(
             scrollDirection: Axis.vertical,
+            shrinkWrap: true,
             children: [
               //Iterar por toda a lista de questoes!
-              IconButton(
-                  onPressed: (){
+              for(Question question in questions)
+                ListTile(title: Text(question.name),),
 
-                  },
-                  icon: const Icon(Icons.plus_one))
             ],
           ),
+          const SizedBox(height: 50,),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: IconButton(
+                        onPressed: () async{
+                          await _buildFormDialog(context, _formKey);
+                        },
+                        style: ButtonStyle(shape: WidgetStatePropertyAll(CircleBorder())),
+                        icon: const Icon(Icons.add)),
+            ),
+          )
+    ,
 
-          const SizedBox(height: 50,)
+
+
 
 
 
@@ -114,4 +135,114 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
       ),
     );
   }
+}
+
+
+
+ Future<List<String>> _buildFormDialog(BuildContext context,GlobalKey<FormState> formKey) async{
+    final TextEditingController questionController = TextEditingController();
+    final alternativeFormKey = GlobalKey<FormState>();
+    List<String> alternatives = <String>[];
+
+    await showDialog(context: context,
+      builder:(context)=>
+      AlertDialog(
+        content: Stack(
+          alignment: AlignmentDirectional.center,
+          children: [
+            Form(
+              key: formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(padding: EdgeInsets.all(10),
+                    child: const Text('Pergunta:'),
+                  ),
+                  Padding(padding: EdgeInsets.all(10),
+                    child: TextFormField(
+                      controller: questionController,
+                      validator: (value){
+                        if(value == null || value.isEmpty){
+                          return 'Digite a pergunta';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 20,),
+                  Padding(padding: EdgeInsets.all(10),
+                    child: const Text('Alternativas:'),
+                  ),
+                  ListView(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    children: <Widget>[
+                      for(Alternative alternative in alternatives)
+                        ListTile(
+                          title: Text(alternative.name),
+                          trailing: alternative.isCorrect ? const Icon(Icons.check) : const Icon(Icons.close),
+                        ),
+
+                    ],
+                  ),
+
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: IconButton(onPressed: ()async{
+                        await showDialog(context: context,
+                            builder: (context)=>
+                              AlertDialog(
+                                content: Form(
+                                    key: alternativeFormKey,
+                                    child: Stack(
+                                      alignment: ,
+                                    )
+                                ),
+                                actions: [
+                                  TextButton(onPressed: (){
+                                    if(alternativeFormKey.currentState!.validate()){
+                                      //Se tudo estiver correto, adicionar a alternativa na lista de alternativas
+                                      alternatives.add()
+                                    }
+                                  },
+                                  child: const Text('Adicionar'))
+                                ],
+                              )
+
+                        );
+                    },
+                        icon: const Icon(Icons.add)
+                    ),
+                  )
+
+
+
+
+                ],
+              )
+            )
+          ],
+        ),
+        actions: [
+          TextButton(
+              onPressed: (){
+                if(formKey.currentState!.validate()){
+                  //Se tudo é válido, adicionar ao firestore!
+                }
+              },
+              child: const Text('Adicionar')
+          ),
+          TextButton(
+              onPressed: (){
+                  Navigator.of(context).pop();
+              },
+              child: const Text('Cancelar')
+          )
+        ],
+      )
+    );
+
+    return <String>[];
+
+
 }

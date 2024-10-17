@@ -69,9 +69,7 @@ class DatabaseService {
   }
   
   Stream<QuerySnapshot?> getSearchedQuizzes({required String searchStr}){
-    searchStr = searchStr.toLowerCase();
-    ///TODO
-    return _quizzesRef.where('public', isEqualTo: true).orderBy('title').startAt(['Filo']).endAt(['Filo']).limit(10)
+    return _quizzesRef.where('public', isEqualTo: true).orderBy('title').startAt([searchStr]).endAt([searchStr]).limit(10)
         .snapshots();
 
         
