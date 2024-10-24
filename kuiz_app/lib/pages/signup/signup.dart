@@ -24,7 +24,6 @@ class Signup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
         bottomNavigationBar: _signin(context),
         appBar: AppBar(
@@ -33,7 +32,7 @@ class Signup extends StatelessWidget {
           toolbarHeight: 50,
         ),
         body: SafeArea(
-          child: SingleChildScrollView(
+          child:  SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 16),
             child: Column(
               children: [
@@ -96,30 +95,12 @@ class Signup extends StatelessWidget {
       children: [
         Text(
             'Nome de usuário',
-            style: GoogleFonts.raleway(
-              textStyle: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.normal,
-                fontSize: 16
-              )
-            ),
         ),
         const SizedBox(height: 8,),
         TextField(
           controller: _usernameController,
           decoration: InputDecoration(
-            filled: true,
             hintText: 'Digite seu nome de usuário aqui',
-            hintStyle: const TextStyle(
-              color: Color(0xff6A6A6A),
-              fontWeight: FontWeight.normal,
-              fontSize: 14
-            ),
-            fillColor: const Color(0xffF7F7F9) ,
-            border: OutlineInputBorder(
-                borderSide: BorderSide.none,
-                borderRadius: BorderRadius.circular(14)
-            )
           ),
         )
       ],
@@ -131,32 +112,14 @@ class Signup extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Email',
-          style: GoogleFonts.raleway(
-              textStyle: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.normal,
-                  fontSize: 16
-              )
-          ),
         ),
         const SizedBox(height: 8,),
         TextField(
           controller: _emailController,
           decoration: InputDecoration(
-              filled: true,
               hintText: 'Digite seu email aqui',
-              hintStyle: const TextStyle(
-                  color: Color(0xff6A6A6A),
-                  fontWeight: FontWeight.normal,
-                  fontSize: 14
-              ),
-              fillColor: const Color(0xffF7F7F9) ,
-              border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(14)
-              )
           ),
         )
       ],
@@ -170,25 +133,13 @@ class Signup extends StatelessWidget {
       children: [
         Text(
           'Password',
-          style: GoogleFonts.raleway(
-              textStyle: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.normal,
-                  fontSize: 16
-              )
-          ),
         ),
         const SizedBox(height: 8,),
         TextField(
           controller: _passwordController,
           obscureText: true,
           decoration: InputDecoration(
-              filled: true,
-              fillColor: const Color(0xffF7F7F9) ,
-              border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(14)
-              )
+            hintText: 'Digite uma senha aqui'
           ),
         )
       ],
@@ -214,7 +165,7 @@ class Signup extends StatelessWidget {
 
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
       },
-      child: const Text("Cadastrar"),
+      child: Text("Cadastrar"),
     );
   }
 
