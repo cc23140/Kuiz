@@ -1,3 +1,5 @@
+import 'package:kuiz_app/models/question_model.dart';
+
 class Quiz{
   final String uid;
   final String title;
@@ -5,6 +7,7 @@ class Quiz{
   final bool public;
   final int questionsAmount;
   final String shareCode;
+  List<Question> questions = [];
 
   Quiz({
     required this.uid,

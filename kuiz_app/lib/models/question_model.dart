@@ -1,7 +1,11 @@
+import 'package:kuiz_app/models/alternative_model.dart';
+
 class Question{
 
-  final String name;
+  late final String name;
   final String quizId;
+
+  List<Alternative> alternatives = [];
 
 
   Question({required this.name, required this.quizId});
