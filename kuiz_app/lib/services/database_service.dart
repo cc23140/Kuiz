@@ -85,7 +85,6 @@ class DatabaseService {
   
   
   //QUESTION
-
   Stream<QuerySnapshot?> getQuestionsByQuizId({required String quizId}){
     return _questionsRef.where('quizId', isEqualTo: quizId).snapshots();
   }

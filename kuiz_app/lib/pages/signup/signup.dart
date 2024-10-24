@@ -197,15 +197,6 @@ class Signup extends StatelessWidget {
 
   Widget _signup(BuildContext context) {
     return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xff0D6EFD),
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
-        minimumSize: const Size(double.infinity, 60),
-        elevation: 0,
-      ),
       onPressed: () async {
         bool? response = await AuthService().signup(
             email: _emailController.text,
@@ -218,6 +209,7 @@ class Signup extends StatelessWidget {
 
         _databaseService.addUser(UserKuiz(uid: FirebaseAuth.instance.currentUser!.uid,
             username: _usernameController.text,
+            email: FirebaseAuth.instance.currentUser!.email!,
             completedQuizzes: 0));
 
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));

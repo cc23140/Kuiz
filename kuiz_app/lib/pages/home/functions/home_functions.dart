@@ -1,5 +1,6 @@
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
+import "package:kuiz_app/pages/account_details/account_details_screen.dart";
 import "package:kuiz_app/pages/home/home_screen.dart";
 import "package:kuiz_app/pages/home/search_screen.dart";
 
@@ -83,11 +84,15 @@ class HomeScreenFunctions {
                 final quiz = snapshot.data!.docs[index].data() as Quiz;
                 return FutureBuilder(future: _databaseService.getUser(uid: quiz.uid),
                     builder: (context, userSnapshot){
+
                       if(userSnapshot.connectionState == ConnectionState.waiting){
                         return const CircularProgressIndicator();
                       }
-                      else if(userSnapshot.hasError || !userSnapshot.hasData || userSnapshot.data == null){
-                        return const Text('Ve oq deu errado aí');
+                      if(userSnapshot.hasError){
+                        return Text('Ve oq deu errado aí ${userSnapshot.error}');
+                      }
+                      if( !userSnapshot.hasData || userSnapshot.data == null){
+                        return const Text('Você não criou nenhum quiz!');
                       }
                       final user = userSnapshot!.data! as UserKuiz;
                       return CardWidget(title: quiz.title, creatorUsername: user.username, image: quiz.image);
@@ -163,7 +168,7 @@ class HomeScreenFunctions {
               ListTile(
                 title: const Text('Acessar perfil'),
                 onTap: () {
-                  ///TODO
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=> AccountDetailsScreen()));
                 },
                 trailing: const Icon(Icons.person),
               ),
