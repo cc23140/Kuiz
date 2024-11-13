@@ -3,8 +3,12 @@ import 'package:kuiz_app/models/alternative_model.dart';
 import 'package:kuiz_app/models/question_model.dart';
 import 'package:kuiz_app/pages/creation/creation_question_screen.dart';
 import 'package:kuiz_app/services/database_service.dart';
-
 import '../../models/quiz_model.dart';
+import 'dart:math';
+
+final _chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+final _random = Random();
+final Set<String> _generatedCodes = {};
 
 class CreationQuizScreen extends StatefulWidget {
   CreationQuizScreen({super.key});
@@ -16,15 +20,20 @@ class CreationQuizScreen extends StatefulWidget {
 class _CreationQuizScreenState extends State<CreationQuizScreen> {
   final DatabaseService _databaseService = DatabaseService();
 
+  String quizCode = '';
+
   final TextEditingController _titleController = TextEditingController();
 
   final TextEditingController _linkImgController = TextEditingController();
 
   List<Question> questions = <Question>[];
 
-
-
   bool isPublic = true;
+
+  @override
+  void initState() {
+    quizCode = List.generate(6, (index)=> _chars[_random.nextInt(_chars.length)]).join();
+  }
 
 
   @override
@@ -34,9 +43,10 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
         title: const Text('Criação de Quiz'),
         toolbarHeight: 100,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
+      body:SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
             Center(
               child: Padding(padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
                   child: SizedBox(
@@ -46,33 +56,49 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
                       decoration: InputDecoration(
                           label: Text('Intitule seu quiz:', style: TextStyle()),
                           border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
-                        prefixIcon: const Icon(Icons.quiz)
+                          prefixIcon: const Icon(Icons.quiz)
                       ),
                     ),
                   )
               ),
             ),
 
-          Center(
-            child: Padding(padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
-                child: SizedBox(
-                  width: MediaQuery.sizeOf(context).width * 0.8,
-                  child: TextField(
-                    controller: _linkImgController,
-                    decoration: InputDecoration(
-                        label: Text('Link da Imagem (Opcional)', style: TextStyle()),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
-                      prefixIcon: const Icon(Icons.image)
+            Center(
+              child: Padding(padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
+                  child: SizedBox(
+                    width: MediaQuery.sizeOf(context).width * 0.8,
+                    child: TextField(
+                      controller: _linkImgController,
+                      decoration: InputDecoration(
+                          label: Text('Link da Imagem (Opcional)', style: TextStyle()),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+                          prefixIcon: const Icon(Icons.image)
+                      ),
                     ),
-                  ),
-                )
+                  )
+              ),
             ),
-          ),
-          SizedBox(height: 40,),
-          Text('Quem pode acessar?'),
-          SizedBox(
-            width: MediaQuery.sizeOf(context).width * 0.7, height: 50,
-            child: Row(
+            Center(
+              child: Padding(padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
+                  child: SizedBox(
+                    width: MediaQuery.sizeOf(context).width * 0.8,
+                    child: TextField(
+                      enabled: false,
+                      controller: _linkImgController,
+                      decoration: InputDecoration(
+                          label: Text(quizCode, style: TextStyle()),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+                          prefixIcon: Icon(Icons.code)
+                      ),
+                    ),
+                  )
+              ),
+            ),
+            SizedBox(height: 40,),
+            Text('Quem pode acessar?'),
+            SizedBox(
+              width: MediaQuery.sizeOf(context).width * 0.7, height: 50,
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -96,67 +122,69 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
                         child: const Text('Privado')),
                   )
                 ],
+              ),
             ),
-          ),
-          const SizedBox(height: 50,),
-
-          ListView.builder(
-            itemCount: questions.length,
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemBuilder: (context, index){
-              Question currentQuestion = questions[index];
-              return Dismissible(key: UniqueKey(),
-                  direction: DismissDirection.endToStart,
-                  onDismissed: (_){
-                    setState(() {
-                      questions.removeAt(index);
-                    });
-                  },
-                  background: Container(
-                    color: Colors.red,
-                    margin: const EdgeInsets.symmetric(horizontal: 15),
-                    alignment: Alignment.centerRight,
-                    child: const Icon(
-                      Icons.delete,
-                      color: Colors.white,
-                    ),
-                  ),
-                  child: GestureDetector(
-                    onTap: ()async{
-                      ///TODO
+            const SizedBox(height: 50,),
+            ListView.builder(
+              itemCount: questions.length,
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemBuilder: (context, index){
+                Question currentQuestion = questions[index];
+                return Dismissible(key: UniqueKey(),
+                    direction: DismissDirection.endToStart,
+                    onDismissed: (_){
+                      setState(() {
+                        questions.removeAt(index);
+                      });
                     },
-                    child: ListTile(
-                      title: Text('${index + 1}. ${questions[index].name}'),
-
+                    background: Container(
+                      color: Colors.red,
+                      margin: const EdgeInsets.symmetric(horizontal: 15),
+                      alignment: Alignment.centerRight,
+                      child: const Icon(
+                        Icons.delete,
+                        color: Colors.white,
+                      ),
                     ),
-                  )
-              );
-            },
-          ),
-          const SizedBox(height: 50,),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: IconButton(
-                        onPressed: () async{
-                          await Navigator.push(context, MaterialPageRoute(builder: (context)=>CreationQuestionScreen(questions: questions)))
-                          .then((_)=>setState(() {}));
+                    child: GestureDetector(
+                        onTap: ()async{
+                          await Navigator.push(context, MaterialPageRoute(builder: (context)=>CreationQuestionScreen(questions: questions, questionIndex: index,)))
+                              .then((_)=>setState(() {}));
                         },
-                        style: ButtonStyle(shape: WidgetStatePropertyAll(CircleBorder())),
-                        icon: const Icon(Icons.add)),
+                        child: Column(
+                          children: [
+                            ListTile(
+                              title: Text('${index + 1}. ${questions[index].name}'),
+                            ),
+                            ...currentQuestion.alternatives.map((alternative){
+                              return ListTile(
+                                title: Text(alternative.name),
+                              );
+                            })
+                          ],
+                        )
+                    )
+                );
+              },
             ),
-          )
-    ,
-
-
-
-
-
-
-        ],
-      ),
+            const SizedBox(height: 50,),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: IconButton(
+                    onPressed: () async{
+                      await Navigator.push(context, MaterialPageRoute(builder: (context)=>CreationQuestionScreen(questions: questions)))
+                          .then((_)=>setState(() {}));
+                    },
+                    style: ButtonStyle(shape: WidgetStatePropertyAll(CircleBorder())),
+                    icon: const Icon(Icons.add)),
+              ),
+            )
+          ],
+        ),
+      )
     );
   }
 }

@@ -8,6 +8,7 @@ class CreationQuestionScreen extends StatefulWidget {
   final int? questionIndex;
   List<Question> questions;
   CreationQuestionScreen({super.key, this.questionIndex, required this.questions});
+  bool isQuestionCreated = false;
 
   @override
   State<CreationQuestionScreen> createState() => _CreationQuestionScreenState();
@@ -26,10 +27,6 @@ class _CreationQuestionScreenState extends State<CreationQuestionScreen> {
       questionController.text = widget.questions[widget.questionIndex!].name;
       currentQuestion.alternatives = widget.questions[widget.questionIndex!].alternatives;
     }
-  }
-
-  void onQuestionChanged(){
-    setState(() {});
   }
 
   @override
@@ -71,11 +68,23 @@ class _CreationQuestionScreenState extends State<CreationQuestionScreen> {
                      ),
                      child: GestureDetector(
                        onTap: ()async{
-                         await Navigator.push(context,
-                             MaterialPageRoute(builder:
-                                 (context)=>CreationAlternativeScreen(question: currentQuestion, alternativeIndex: index,)
-                             )
-                         ).then((_)=>setState(() {}));
+                         if(widget.questionIndex != null){
+                           widget.questions.removeAt(widget.questionIndex!);
+                           widget.questions.insert(widget.questionIndex!, currentQuestion);
+                           await Navigator.push(context,
+                               MaterialPageRoute(builder:
+                                   (context)=>CreationAlternativeScreen(question: widget.questions[widget.questionIndex!], alternativeIndex: index,)
+                               )
+                           ).then((_)=>setState(() {}));
+                         }
+                         else{
+                           widget.questions.add(currentQuestion);
+                           await Navigator.push(context,
+                               MaterialPageRoute(builder:
+                                   (context)=>CreationAlternativeScreen(question: widget.questions.last, alternativeIndex: index,)
+                               )
+                           ).then((_)=>setState(() {}));
+                         }
                        },
                        child: ListTile(
                          title: Text(alternative.name),
@@ -87,31 +96,32 @@ class _CreationQuestionScreenState extends State<CreationQuestionScreen> {
                 },
               ),
               Align(
-                alignment: AlignmentDirectional.center,
-                child: TextButton(
-                    onPressed: (){
+                alignment: AlignmentDirectional.bottomEnd,
+                child: IconButton(
+                    onPressed: () async{
                       if(widget.questionIndex != null){
                         widget.questions.removeAt(widget.questionIndex!);
                         widget.questions.insert(widget.questionIndex!, currentQuestion);
+                        await Navigator.push(context, MaterialPageRoute(builder: (context){
+                          return CreationAlternativeScreen(question: widget.questions[widget.questionIndex!]);
+                        })
+                        ).then((_){setState(() {});});
+                      }
+                      if(widget.isQuestionCreated == false){
+                        widget.isQuestionCreated = true;
+                        widget.questions.add(currentQuestion);
+                        await Navigator.push(context, MaterialPageRoute(builder: (context){
+                          return CreationAlternativeScreen(question: widget.questions.last);
+                        })
+                        ).then((_){setState(() {});});
                       }
                       else{
-                        widget.questions.add(currentQuestion);
+                        await Navigator.push(context, MaterialPageRoute(builder: (context){
+                          return CreationAlternativeScreen(question: widget.questions.last);
+                        })
+                        ).then((_){setState(() {});});
                       }
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Salvar')
-                ),
-              ),
-              Align(
-                alignment: AlignmentDirectional.bottomEnd,
-                child: IconButton(
-                    onPressed: ()async{
-                      await Navigator.push(context, MaterialPageRoute(builder: (context){
 
-                      widget.questions.add(currentQuestion);
-                      return CreationAlternativeScreen(question: widget.questions.last);
-                    })
-                  ).then((_){setState(() {});});
                 }, icon: const Icon(Icons.add)),
               )
             ],
