@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kuiz_app/models/alternative_model.dart';
 import 'package:kuiz_app/models/question_model.dart';
@@ -149,7 +150,7 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
                     ),
                     child: GestureDetector(
                         onTap: ()async{
-                          await Navigator.push(context, MaterialPageRoute(builder: (context)=>CreationQuestionScreen(questions: questions, questionIndex: index,)))
+                          await Navigator.push(context, MaterialPageRoute(builder: (context)=>CreationQuestionScreen(questions: questions, questionIndex: index, isQuestionCreated: true,)))
                               .then((_)=>setState(() {}));
                         },
                         child: Column(
@@ -180,6 +181,31 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
                     },
                     style: ButtonStyle(shape: WidgetStatePropertyAll(CircleBorder())),
                     icon: const Icon(Icons.add)),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: TextButton(
+                    onPressed: () async{
+                      if(questions.length >= 1){
+                        _databaseService.addQuiz(
+                            Quiz(
+                                quizId: '',
+                                uid: FirebaseAuth.instance.currentUser!.uid,
+                                title: _titleController.text,
+                                image: 'https://i.kym-cdn.com/entries/icons/mobile/000/048/253/nug.jpg',
+                                public: isPublic,
+                                questionsAmount: questions.length,
+                                shareCode: quizCode
+                            ),
+                          questions
+                        );
+                      }
+                    },
+                    child: Text('Criar Kuiz')
+                ),
               ),
             )
           ],

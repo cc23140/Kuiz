@@ -32,6 +32,7 @@ class _CreationAlternativeScreenState extends State<CreationAlternativeScreen> {
       body: SafeArea(
           child: Column(
             children: [
+              Text(widget.question.name),
               TextField(
                 controller: alternativeController,
               ),
@@ -42,10 +43,10 @@ class _CreationAlternativeScreenState extends State<CreationAlternativeScreen> {
                   onPressed:(){
                     if(widget.alternativeIndex != null){
                       widget.question.alternatives.removeAt(widget.alternativeIndex!);
-                      widget.question.alternatives.insert(widget.alternativeIndex!, Alternative(idQuestion: '', name: alternativeController.text, isCorrect: isCorrect));
+                      widget.question.alternatives.insert(widget.alternativeIndex!, Alternative(alternativeId: '', questionId: '', name: alternativeController.text, isCorrect: isCorrect));
                     }
                     else{
-                      widget.question.alternatives.add(Alternative(idQuestion: '', name: alternativeController.text, isCorrect: isCorrect));
+                      widget.question.alternatives.add(Alternative(alternativeId: '', questionId: '', name: alternativeController.text, isCorrect: isCorrect));
                     }
                     Navigator.pop(context);
                   },

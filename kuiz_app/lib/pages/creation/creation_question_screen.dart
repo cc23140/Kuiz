@@ -7,8 +7,9 @@ import 'package:kuiz_app/pages/creation/creation_alternative_screen.dart';
 class CreationQuestionScreen extends StatefulWidget {
   final int? questionIndex;
   List<Question> questions;
-  CreationQuestionScreen({super.key, this.questionIndex, required this.questions});
-  bool isQuestionCreated = false;
+  bool isQuestionCreated;
+  CreationQuestionScreen({super.key, this.questionIndex, required this.questions, this.isQuestionCreated=false});
+
 
   @override
   State<CreationQuestionScreen> createState() => _CreationQuestionScreenState();
@@ -17,7 +18,7 @@ class CreationQuestionScreen extends StatefulWidget {
 class _CreationQuestionScreenState extends State<CreationQuestionScreen> {
 
 
-  Question currentQuestion = Question(name: '', quizId: '');
+  Question currentQuestion = Question(questionId: '',name: '', quizId: '');
   final TextEditingController questionController = TextEditingController();
 
   @override
@@ -25,6 +26,7 @@ class _CreationQuestionScreenState extends State<CreationQuestionScreen> {
     super.initState();
     if(widget.questionIndex != null){
       questionController.text = widget.questions[widget.questionIndex!].name;
+      currentQuestion.name = questionController.text;
       currentQuestion.alternatives = widget.questions[widget.questionIndex!].alternatives;
     }
   }
@@ -36,6 +38,7 @@ class _CreationQuestionScreenState extends State<CreationQuestionScreen> {
       body: SafeArea(
           child: Column(
             children: [
+              Text(widget.questionIndex.toString()),
               SizedBox(
                 width: MediaQuery.sizeOf(context).width * 0.7,
                 child: TextField(
@@ -107,7 +110,7 @@ class _CreationQuestionScreenState extends State<CreationQuestionScreen> {
                         })
                         ).then((_){setState(() {});});
                       }
-                      if(widget.isQuestionCreated == false){
+                      else if(widget.isQuestionCreated == false){
                         widget.isQuestionCreated = true;
                         widget.questions.add(currentQuestion);
                         await Navigator.push(context, MaterialPageRoute(builder: (context){
