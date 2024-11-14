@@ -89,6 +89,14 @@ class DatabaseService {
     });
   }
 
+  Future<List<Question>> getQuestions(Quiz quiz) async{
+    Stream<QuerySnapshot> querySnapshots = _questionsRef.where('quizd', isEqualTo: quiz.quizId).snapshots();
+    QuerySnapshot snapshot = await querySnapshots.first;
+    return snapshot.docs.map((doc){
+      return doc.data() as Question;
+    }).toList();
+  }
+
   Stream<QuerySnapshot?> getCreatedQuizzes({required String uid}) {
     return _quizzesRef.limit(7).where('uid', isEqualTo: uid).snapshots();
   }

@@ -9,7 +9,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:kuiz_app/services/database_service.dart';
 
 import '../../services/auth_service.dart';
-import '../home/home.dart';
 import '../login/login.dart';
 
 class Signup extends StatelessWidget {

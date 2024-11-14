@@ -1,5 +1,7 @@
+import "package:carousel_slider/carousel_slider.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
+import "package:kuiz_app/models/card_info.dart";
 import "package:kuiz_app/pages/account_details/account_details_screen.dart";
 import "package:kuiz_app/pages/home/home_screen.dart";
 import "package:kuiz_app/pages/home/search_screen.dart";
@@ -64,6 +66,7 @@ class HomeScreenFunctions {
 
 
   static Widget buildCreatedQuizzes(BuildContext context, DatabaseService _databaseService){
+    List<CardInfo> items = [];
     return StreamBuilder(stream: _databaseService.getCreatedQuizzes(uid: FirebaseAuth.instance.currentUser!.uid),
         builder: (context, snapshot) {
           if(snapshot.connectionState == ConnectionState.waiting){
@@ -76,13 +79,12 @@ class HomeScreenFunctions {
             return const Text('Você não criou nenhum quiz');
           }
 
-          return snapshot.data!.docs.isNotEmpty ? ListView.builder(
-              scrollDirection: Axis.horizontal,
-              physics: const ScrollPhysics(),
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (context, index){
-                final quiz = snapshot.data!.docs[index].data() as Quiz;
-                return FutureBuilder(future: _databaseService.getUser(uid: quiz.uid),
+          return snapshot.data!.docs.isNotEmpty ? FutureBuilder(
+                    future: Future.wait(snapshot.data!.docs.map((doc)async{
+                      final quiz = doc.data() as Quiz;
+                      final user = await _databaseService.getUser(uid: quiz.uid);
+                      return CardInfo(title: quiz.title, username: user.username, image: quiz.image);
+                    }).toList()),
                     builder: (context, userSnapshot){
 
                       if(userSnapshot.connectionState == ConnectionState.waiting){
@@ -94,10 +96,26 @@ class HomeScreenFunctions {
                       if( !userSnapshot.hasData || userSnapshot.data == null){
                         return const Text('Você não criou nenhum quiz!');
                       }
-                      final user = userSnapshot!.data! as UserKuiz;
-                      return CardWidget(title: quiz.title, creatorUsername: user.username, image: quiz.image);
-
-                    });
+                      items = userSnapshot.data as List<CardInfo>;
+                      return CarouselSlider(
+                        options: CarouselOptions(
+                          viewportFraction: 0.8,
+                            height: 300.0,
+                            enableInfiniteScroll: false,
+                            scrollPhysics: BouncingScrollPhysics()
+                        ),
+                        items: items.map((cardInfo) {
+                          return Builder(
+                            builder: (BuildContext context) {
+                              return CardWidget(
+                                  title: cardInfo.title,
+                                  creatorUsername: cardInfo.username,
+                                  image: cardInfo.image
+                              );
+                            },
+                          );
+                        }).toList(),
+                      );
               }
           ) : Container(alignment: Alignment.center,
             child: Text(
@@ -109,6 +127,7 @@ class HomeScreenFunctions {
   }
 
   static Widget buildGeneralQuizzes(BuildContext context, DatabaseService _databaseService){
+    List<CardInfo> items = [];
     return StreamBuilder(stream: _databaseService.getGeneralQuizzes(),
         builder: (context, snapshot){
           if(snapshot.connectionState == ConnectionState.waiting){
@@ -120,24 +139,41 @@ class HomeScreenFunctions {
           else if(!snapshot.hasData || snapshot.data == null){
             return const Text('Não há quizzes gerais');
           }
-          return ListView.builder(itemCount: snapshot.data!.docs.length,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index){
-                final quiz = snapshot.data!.docs[index].data() as Quiz;
-                return FutureBuilder(future: _databaseService.getUser(uid: quiz.uid),
-                    builder: (context, userSnapshot){
-                      if(userSnapshot.connectionState == ConnectionState.waiting){
+          return FutureBuilder(future: Future.wait(snapshot.data!.docs.map((doc)async{
+                  final quiz = doc.data() as Quiz;
+                  final user = await _databaseService.getUser(uid: quiz.uid);
+                  return CardInfo(title: quiz.title, username: user.username, image: quiz.image);
+                }).toList()),
+                    builder: (context, cardSnapshot){
+                      if(cardSnapshot.connectionState == ConnectionState.waiting){
                         return const CircularProgressIndicator();
                       }
-                      else if(userSnapshot.hasError || !userSnapshot.hasData || userSnapshot.data == null){
+                      else if(cardSnapshot.hasError || !cardSnapshot.hasData || cardSnapshot.data == null){
                         return const Text('Usuário não encontrado!');
                       }
-                      final user = userSnapshot.data as UserKuiz;
-                      return CardWidget(title: quiz.title, creatorUsername: user.username, image: quiz.image);
+
+                      items = cardSnapshot.data as List<CardInfo>;
+                      return CarouselSlider(
+                        options: CarouselOptions(
+                            viewportFraction: 0.8,
+                            height: 300.0,
+                            enableInfiniteScroll: false,
+                            scrollPhysics: BouncingScrollPhysics()
+                        ),
+                        items: items.map((cardInfo) {
+                          return Builder(
+                            builder: (BuildContext context) {
+                              return CardWidget(
+                                  title: cardInfo.title,
+                                  creatorUsername: cardInfo.username,
+                                  image: cardInfo.image
+                              );
+                            },
+                          );
+                        }).toList(),
+                      );
                     }
                 );
-              }
-          );
         }
     );
 

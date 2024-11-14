@@ -20,8 +20,10 @@ class HomeScreen extends StatelessWidget {
   final _databaseService = DatabaseService();
   final TextEditingController _searchController = TextEditingController();
 
+
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         appBar: HomeScreenFunctions.buildAppBar(context, _searchController),
         body: SingleChildScrollView(
