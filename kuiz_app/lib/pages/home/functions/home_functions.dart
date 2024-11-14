@@ -3,6 +3,7 @@ import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:kuiz_app/models/card_info.dart";
 import "package:kuiz_app/pages/account_details/account_details_screen.dart";
+import "package:kuiz_app/pages/answer_quiz/answer_quiz_screen.dart";
 import "package:kuiz_app/pages/home/home_screen.dart";
 import "package:kuiz_app/pages/home/search_screen.dart";
 
@@ -83,7 +84,7 @@ class HomeScreenFunctions {
                     future: Future.wait(snapshot.data!.docs.map((doc)async{
                       final quiz = doc.data() as Quiz;
                       final user = await _databaseService.getUser(uid: quiz.uid);
-                      return CardInfo(title: quiz.title, username: user.username, image: quiz.image);
+                      return CardInfo(title: quiz.title, username: user.username, image: quiz.image, quizId: quiz.quizId);
                     }).toList()),
                     builder: (context, userSnapshot){
 
@@ -110,7 +111,8 @@ class HomeScreenFunctions {
                               return CardWidget(
                                   title: cardInfo.title,
                                   creatorUsername: cardInfo.username,
-                                  image: cardInfo.image
+                                  image: cardInfo.image,
+                                  quizId: cardInfo.quizId,
                               );
                             },
                           );
@@ -142,7 +144,7 @@ class HomeScreenFunctions {
           return FutureBuilder(future: Future.wait(snapshot.data!.docs.map((doc)async{
                   final quiz = doc.data() as Quiz;
                   final user = await _databaseService.getUser(uid: quiz.uid);
-                  return CardInfo(title: quiz.title, username: user.username, image: quiz.image);
+                  return CardInfo(title: quiz.title, username: user.username, image: quiz.image, quizId: quiz.quizId);
                 }).toList()),
                     builder: (context, cardSnapshot){
                       if(cardSnapshot.connectionState == ConnectionState.waiting){
@@ -163,11 +165,7 @@ class HomeScreenFunctions {
                         items: items.map((cardInfo) {
                           return Builder(
                             builder: (BuildContext context) {
-                              return CardWidget(
-                                  title: cardInfo.title,
-                                  creatorUsername: cardInfo.username,
-                                  image: cardInfo.image
-                              );
+                              return CardWidget(title: cardInfo.title, creatorUsername: cardInfo.username, image: cardInfo.image, quizId: cardInfo.quizId,);
                             },
                           );
                         }).toList(),

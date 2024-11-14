@@ -3,8 +3,9 @@ import 'package:kuiz_app/models/question_model.dart';
 import 'package:kuiz_app/services/database_service.dart';
 
 class AnswerQuizScreen extends StatefulWidget {
+  final String quizId;
   final int currentIndex;
-  const AnswerQuizScreen({super.key, required this.currentIndex});
+  const AnswerQuizScreen({super.key, required this.currentIndex, required this.quizId});
 
   @override
   State<AnswerQuizScreen> createState() => _AnswerQuizScreenState();
@@ -13,20 +14,27 @@ class AnswerQuizScreen extends StatefulWidget {
 class _AnswerQuizScreenState extends State<AnswerQuizScreen> {
 
   final DatabaseService _databaseService = DatabaseService();
-  late final List<Question> questions = [];
+  late List<Question> questions;
 
 
   void loadQuestions()async{
-    questions = await _databaseService.getQuestions(quiz);
+    questions = await _databaseService.getQuestions(widget.quizId);
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    loadQuestions();
   }
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(),
+      body: Column(
+        children: [
+          Text(widget.quizId)
+        ],
+      ),
+    );
   }
 }

@@ -89,16 +89,23 @@ class DatabaseService {
     });
   }
 
-  Future<List<Question>> getQuestions(Quiz quiz) async{
-    Stream<QuerySnapshot> querySnapshots = _questionsRef.where('quizd', isEqualTo: quiz.quizId).snapshots();
+  Future<List<Question>> getQuestions(String quizId) async{
+    Stream<QuerySnapshot> querySnapshots = _questionsRef.where('quizId', isEqualTo: quizId).snapshots();
     QuerySnapshot snapshot = await querySnapshots.first;
     return snapshot.docs.map((doc){
       return doc.data() as Question;
     }).toList();
   }
 
+  Future<Quiz?> getQuiz({required String quizId}) async{
+    final querySnapshots = await _quizzesRef.where('quizId',isEqualTo: quizId).get();
+    if(querySnapshots.docs.isNotEmpty){
+      return querySnapshots.docs.first.data() as Quiz;
+    }
+  }
+
   Stream<QuerySnapshot?> getCreatedQuizzes({required String uid}) {
-    return _quizzesRef.limit(7).where('uid', isEqualTo: uid).snapshots();
+    return _quizzesRef.limit(15).where('uid', isEqualTo: uid).snapshots();
   }
 
   Stream<QuerySnapshot?> getGeneralQuizzes(){
@@ -106,10 +113,9 @@ class DatabaseService {
   }
   
   Stream<QuerySnapshot?> getSearchedQuizzes({required String searchStr}){
-    return _quizzesRef.where('public', isEqualTo: true).orderBy('title').startAt([searchStr]).endAt([searchStr]).limit(10)
-        .snapshots();
-
-        
+    String endStr = searchStr.substring(0, searchStr.length - 1) +
+        String.fromCharCode(searchStr.codeUnitAt(searchStr.length - 1) + 1);
+    return _quizzesRef.where('public', isEqualTo: true).orderBy('title').endAt([endStr]).limit(10).snapshots();
   }
 
   Future<Quiz?> getQuizByCode({required String shareCode}) async{

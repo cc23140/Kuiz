@@ -54,7 +54,7 @@ class SearchScreen extends StatelessWidget {
                         final user = userSnapshot.data![index] as UserKuiz;
 
 
-                        return CardWidget(title: quiz.title, creatorUsername: user.username, image: quiz.image);
+                        return CardWidget(title: quiz.title, creatorUsername: user.username, image: quiz.image, quizId: quiz.quizId,);
                       });
               },
             );
