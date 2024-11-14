@@ -32,7 +32,7 @@ class AuthService {
         message = 'An account already exists with that email';
       }
 
-      Fluttertoast.showToast(
+      message == ''? null : Fluttertoast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.SNACKBAR,
@@ -68,7 +68,7 @@ class AuthService {
         message = 'Wrong password provided for that user';
       }
 
-      Fluttertoast.showToast(
+      message == ''? null : Fluttertoast.showToast(
           msg: message,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.SNACKBAR,

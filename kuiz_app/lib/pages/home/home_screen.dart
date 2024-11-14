@@ -29,12 +29,14 @@ class HomeScreen extends StatelessWidget {
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             textDirection: TextDirection.ltr,
             children: [
+              const Divider(),
               const Text(
                 'Quizzes criados',
                 style: TextStyle(
-                    fontSize: 28
+                    fontSize: 24
                 ),
               ),
               SizedBox(

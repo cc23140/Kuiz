@@ -25,11 +25,6 @@ class Signup extends StatelessWidget {
     return Scaffold(
         resizeToAvoidBottomInset: true,
         bottomNavigationBar: _signin(context),
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          toolbarHeight: 50,
-        ),
         body: SafeArea(
           child:  SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 16),
@@ -78,7 +73,10 @@ class Signup extends StatelessWidget {
                 const SizedBox(height: 20,),
                 _password(),
                 const SizedBox(height: 50,),
-                _signup(context),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: _signup(context),
+                ),
               ],
             ),
 
@@ -93,13 +91,13 @@ class Signup extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-            'Nome de usuário',
+            'Username',
         ),
         const SizedBox(height: 8,),
         TextField(
           controller: _usernameController,
           decoration: InputDecoration(
-            hintText: 'Digite seu nome de usuário aqui',
+            hintText: 'Crie seu username aqui',
           ),
         )
       ],
@@ -131,14 +129,14 @@ class Signup extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Password',
+          'Senha',
         ),
         const SizedBox(height: 8,),
         TextField(
           controller: _passwordController,
           obscureText: true,
           decoration: InputDecoration(
-            hintText: 'Digite uma senha aqui'
+            hintText: 'Crie sua senha aqui'
           ),
         )
       ],
@@ -153,7 +151,7 @@ class Signup extends StatelessWidget {
             password: _passwordController.text,
             context: context
         );
-        if(bool == null) {
+        if(response == null) {
           return;
         }
 

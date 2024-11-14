@@ -19,14 +19,23 @@ class CardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double raio = 10;
+    final double raio = 14;
     return GestureDetector(
       onTap: (){
         Navigator.push(context, MaterialPageRoute(builder: (context)=>AnswerQuizHomeScreen(quizId: quizId)));
       },
       child: Container(
         decoration:
-        BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(raio)), border: Border.all(color: Colors.black, style: BorderStyle.solid, width: 2)),
+        BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(raio)),
+            border: Border.all(color: Colors.black, style: BorderStyle.solid, width: 1.4),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                blurRadius: 3
+              )
+            ]
+        ),
         width: 300,
         height: MediaQuery.sizeOf(context).height,
         margin: EdgeInsets.all(10),
@@ -38,7 +47,7 @@ class CardWidget extends StatelessWidget {
             Expanded(
                 flex: 18,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(raio), topRight: Radius.circular(raio)),
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(raio-2), topRight: Radius.circular(raio-2)),
                   child: Image.network(image, fit: BoxFit.fill, width: MediaQuery.sizeOf(context).width,),
                 )
             ),

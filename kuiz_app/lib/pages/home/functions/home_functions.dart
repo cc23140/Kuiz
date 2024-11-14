@@ -20,11 +20,15 @@ class HomeScreenFunctions {
     return AppBar(
         leading: Builder(
             builder: (context) {
-              return IconButton(
-                  icon: const Icon(Icons.menu, size: 40,),
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  }
+              return Align(
+                alignment: Alignment.center,
+                child: IconButton(
+                  padding: EdgeInsets.fromLTRB(0, 10, 0, 0  ),
+                    icon: const Icon(Icons.menu, size: 36,color: Colors.blue,),
+                    onPressed: () {
+                      Scaffold.of(context).openDrawer();
+                    }
+                ),
               );
 
             }
@@ -180,20 +184,21 @@ class HomeScreenFunctions {
 
   static Widget buildAppDrawer(BuildContext context){
     return Drawer(
+        backgroundColor: Colors.white,
         child: ListView(
             padding: EdgeInsets.zero,
             children: [
               const DrawerHeader(
                   decoration: BoxDecoration(
-                      color: Colors.blue
+                    color: Colors.white
                   ),
                   child: Row(
-                    children: [
-                      Icon(Icons.settings),
-                      Text('Configurações'),
-                    ],
-                  )
-
+                      children: [
+                        Icon(Icons.settings, color: Colors.grey, size: 32,),
+                        SizedBox(width: 10,),
+                        Text('Configurações', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),),
+                      ],
+                    )
               ),
 
               const ListTile(
@@ -216,7 +221,7 @@ class HomeScreenFunctions {
               SizedBox(height: MediaQuery.sizeOf(context).height * 0.4,),
               ListTile(
                 title: Text('Sair da conta'),
-                leading: Icon(Icons.exit_to_app),
+                trailing: Icon(Icons.exit_to_app, color: Colors.redAccent,),
                 onTap: (){
                   AuthService().signout(context: context);
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Login()));
