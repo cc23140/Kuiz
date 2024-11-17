@@ -30,29 +30,54 @@ class _CreationAlternativeScreenState extends State<CreationAlternativeScreen> {
     return Scaffold(
       appBar: AppBar(),
       body: SafeArea(
-          child: Column(
-            children: [
-              Text(widget.question.name),
-              TextField(
-                controller: alternativeController,
-              ),
-              Checkbox(value: isCorrect, onChanged: (value)=>setState(() {
-                isCorrect = !isCorrect;
-              })),
-              TextButton(
-                  onPressed:(){
-                    if(widget.alternativeIndex != null){
-                      widget.question.alternatives.removeAt(widget.alternativeIndex!);
-                      widget.question.alternatives.insert(widget.alternativeIndex!, Alternative(alternativeId: '', questionId: '', name: alternativeController.text, isCorrect: isCorrect));
-                    }
-                    else{
-                      widget.question.alternatives.add(Alternative(alternativeId: '', questionId: '', name: alternativeController.text, isCorrect: isCorrect));
-                    }
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Salvar')
-              )
-            ],
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child: Column(
+              children: [
+                Divider(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex: 9,
+                      child: SizedBox(
+                        width: 325,
+                        height: 50,
+                        child: TextField(
+                          decoration: InputDecoration(
+                            hintText: 'Digite aqui a alternativa'
+                          ),
+                          controller: alternativeController,
+                        ),
+                      )
+                    ),
+                    Expanded(
+                      flex: 1,
+                        child: Checkbox(value: isCorrect, onChanged: (value)=>setState(() {
+                          isCorrect = !isCorrect;
+                        }))
+                    ),
+                  ],
+                ),
+                 Container(
+                   margin: EdgeInsets.all(15),
+                   child: ElevatedButton(
+                       onPressed:(){
+                         if(widget.alternativeIndex != null){
+                           widget.question.alternatives.removeAt(widget.alternativeIndex!);
+                           widget.question.alternatives.insert(widget.alternativeIndex!, Alternative(alternativeId: '', questionId: '', name: alternativeController.text, isCorrect: isCorrect));
+                         }
+                         else{
+                           widget.question.alternatives.add(Alternative(alternativeId: '', questionId: '', name: alternativeController.text, isCorrect: isCorrect));
+                         }
+                         Navigator.pop(context);
+                       },
+                       child: const Text('Salvar')
+                   ),
+                 )
+              ],
+            ),
           )
       ),
     );

@@ -29,12 +29,6 @@ class CardWidget extends StatelessWidget {
         BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(raio)),
             border: Border.all(color: Colors.black, style: BorderStyle.solid, width: 1.4),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.3),
-                blurRadius: 3
-              )
-            ]
         ),
         width: 300,
         height: MediaQuery.sizeOf(context).height,

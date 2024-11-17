@@ -58,10 +58,14 @@ class Login extends StatelessWidget {
           'Email Address',
         ),
         const SizedBox(height: 8,),
-        TextField(
-          controller: _emailController,
-          decoration: InputDecoration(
+        SizedBox(
+          width: 325,
+          height: 50,
+          child: TextField(
+            controller: _emailController,
+            decoration: InputDecoration(
               hintText: 'Digite aqui seu email',
+            ),
           ),
         )
       ],
@@ -77,11 +81,15 @@ class Login extends StatelessWidget {
           'Senha',
         ),
         const SizedBox(height: 8,),
-        TextField(
-          obscureText: true,
-          controller: _passwordController,
-          decoration: InputDecoration(
+        SizedBox(
+          width: 325,
+          height: 50,
+          child: TextField(
+            obscureText: true,
+            controller: _passwordController,
+            decoration: InputDecoration(
               hintText: 'Digite aqui sua senha',
+            ),
           ),
         )
       ],

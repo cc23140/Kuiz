@@ -1,15 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:kuiz_app/models/alternative_model.dart';
 import 'package:kuiz_app/models/question_model.dart';
 import 'package:kuiz_app/pages/creation/creation_question_screen.dart';
 import 'package:kuiz_app/services/database_service.dart';
 import '../../models/quiz_model.dart';
+import 'package:http/http.dart' as http;
 import 'dart:math';
 
 final _chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 final _random = Random();
-final Set<String> _generatedCodes = {};
+const String DEFAULT_IMAGE_URL = 'https://i.pinimg.com/originals/55/0c/80/550c80a326b9d687b038b5f5f72b0724.jpg';
 
 class CreationQuizScreen extends StatefulWidget {
   CreationQuizScreen({super.key});
@@ -33,6 +33,7 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
 
   @override
   void initState() {
+    _linkImgController.text = DEFAULT_IMAGE_URL;
     quizCode = List.generate(6, (index)=> _chars[_random.nextInt(_chars.length)]).join();
   }
 
@@ -190,12 +191,15 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
                 child: TextButton(
                     onPressed: () async{
                       if(questions.length >= 1){
+                        if(!(await isValidUrl(_linkImgController.text))){
+                          _linkImgController.text = DEFAULT_IMAGE_URL;
+                        }
                         _databaseService.addQuiz(
                             Quiz(
                                 quizId: '',
                                 uid: FirebaseAuth.instance.currentUser!.uid,
                                 title: _titleController.text,
-                                image: 'https://i.kym-cdn.com/entries/icons/mobile/000/048/253/nug.jpg',
+                                image: _linkImgController.text,
                                 public: isPublic,
                                 questionsAmount: questions.length,
                                 shareCode: quizCode
@@ -212,5 +216,22 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
         ),
       )
     );
+  }
+
+  Future<bool> isValidUrl(String url) async{
+    try{
+      final response = await http.get(Uri.parse(url));
+
+      //Verifica se de fato é uma imagem passada como URL
+      if (response.statusCode == 200 &&
+        response.headers['content-type'] != null &&
+        response.headers['content-type']!.startsWith('/image')){
+        return true;
+      }
+      return false;
+    }
+    catch(e){
+      return false;
+    }
   }
 }

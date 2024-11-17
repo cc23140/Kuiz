@@ -38,7 +38,7 @@ final ThemeData defaultTheme = ThemeData(
 
   //TextFieldTheme / InputDecorationTheme
   inputDecorationTheme: InputDecorationTheme(
-
+    isDense: true,
     focusedBorder: OutlineInputBorder(
       borderSide: BorderSide(color: preferredColor, width: 1.5),
       borderRadius: BorderRadius.circular(14)
@@ -50,7 +50,9 @@ final ThemeData defaultTheme = ThemeData(
     ),
 
     hintStyle: TextStyle(
-      color: hintTextColor
+      fontWeight: FontWeight.normal,
+      color: hintTextColor,
+      fontSize: 14
     ),
 
   ),

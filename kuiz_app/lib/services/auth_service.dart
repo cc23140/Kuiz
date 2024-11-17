@@ -9,8 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../pages/home/home_screen.dart';
 
 class AuthService {
-  
-  
 
   Future<bool?> signup({
     required String email,

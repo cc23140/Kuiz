@@ -52,7 +52,13 @@ class HomeScreenFunctions {
                 ),
                 suffixIcon: IconButton(
                   onPressed: (){
+                    if(_searchController.text.length > 0){
                       Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen(searchController: _searchController)));
+                    }
+                    else{
+                      //Avisar ao usuário escrever sobre o que pesquisar
+                    }
+
                   },
                   icon: Icon(Icons.search, size: 20)  ,
                 ),
@@ -96,7 +102,7 @@ class HomeScreenFunctions {
                         return const CircularProgressIndicator();
                       }
                       if(userSnapshot.hasError){
-                        return Text('Ve oq deu errado aí ${userSnapshot.error}');
+                        return Text('Erro: ${userSnapshot.error}');
                       }
                       if( !userSnapshot.hasData || userSnapshot.data == null){
                         return const Text('Você não criou nenhum quiz!');
@@ -196,13 +202,9 @@ class HomeScreenFunctions {
                       children: [
                         Icon(Icons.settings, color: Colors.grey, size: 32,),
                         SizedBox(width: 10,),
-                        Text('Configurações', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),),
+                        Text('Configurações', style: TextStyle(fontSize: 22, color: Colors.black54),),
                       ],
                     )
-              ),
-
-              const ListTile(
-                  title: const Text('Conta')
               ),
               ListTile(
                 title: const Text('Acessar perfil'),
@@ -211,6 +213,10 @@ class HomeScreenFunctions {
                 },
                 trailing: const Icon(Icons.person),
               ),
+              const Divider(
+                color: Colors.grey,
+                thickness: 0.5,
+              ),
               ListTile(
                 title: const Text('Criar quiz'),
                 onTap: (){
@@ -218,7 +224,19 @@ class HomeScreenFunctions {
                 },
                 trailing: const Icon(Icons.create),
               ),
-              SizedBox(height: MediaQuery.sizeOf(context).height * 0.4,),
+              const Divider(
+                color: Colors.grey,
+                thickness: 0.5,
+              ),
+              const ListTile(
+                title: Text('Acessar quiz'),
+                trailing: Icon(Icons.code),
+              ),
+              const Divider(
+                color: Colors.grey,
+                thickness: 0.5,
+              ),
+              SizedBox(height: MediaQuery.sizeOf(context).height * 0.3,),
               ListTile(
                 title: Text('Sair da conta'),
                 trailing: Icon(Icons.exit_to_app, color: Colors.redAccent,),

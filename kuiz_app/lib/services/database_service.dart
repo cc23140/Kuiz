@@ -115,7 +115,7 @@ class DatabaseService {
   Stream<QuerySnapshot?> getSearchedQuizzes({required String searchStr}){
     String endStr = searchStr.substring(0, searchStr.length - 1) +
         String.fromCharCode(searchStr.codeUnitAt(searchStr.length - 1) + 1);
-    return _quizzesRef.where('public', isEqualTo: true).orderBy('title').endAt([endStr]).limit(10).snapshots();
+    return _quizzesRef.where('public', isEqualTo: true).orderBy('title').startAt([searchStr]).endAt([endStr]).limit(10).snapshots();
   }
 
   Future<Quiz?> getQuizByCode({required String shareCode}) async{

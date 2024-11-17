@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kuiz_app/models/user_model.dart';
 import 'package:kuiz_app/services/database_service.dart';
@@ -31,7 +32,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    return uid == null ? CircularProgressIndicator() : Scaffold(
+    return Scaffold(
       appBar: AppBar(),
       body: FutureBuilder(future: _databaseService.getUser(uid: uid),
               builder: (context, snapshot){
@@ -42,8 +43,6 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                 if(snapshot.hasError || !snapshot.hasData || snapshot.data == null){
                   return const Align(alignment: AlignmentDirectional.center, child: SizedBox(width: 200, height: 200, child: const Text('Um erro inesperado ocorreu! Tente novamente mais tarde'),),);
                 }
-
-
 
                 UserKuiz currentUser = snapshot.data as UserKuiz;
                 usernameController.text = currentUser.username;

@@ -29,24 +29,35 @@ class HomeScreen extends StatelessWidget {
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             textDirection: TextDirection.ltr,
             children: [
               const Divider(),
-              const Text(
-                'Quizzes criados',
-                style: TextStyle(
-                    fontSize: 24
+              const Padding(
+                padding: EdgeInsets.fromLTRB(40, 20, 0, 0),
+                child: const Text(
+                  'Quizzes criados',
+                  style: TextStyle(
+                      fontSize: 24
+                  ),
                 ),
               ),
+
               SizedBox(
                 height: 225,
                 width: MediaQuery.sizeOf(context).width,
                 child: HomeScreenFunctions.buildCreatedQuizzes(context, _databaseService),
               ),
 
-              const Text(
-                  'Quizzes da comunidade'
+              const Padding(
+                padding: EdgeInsets.fromLTRB(40, 20, 0, 0),
+                child: const Text(
+                  'Quizzes da Comunidade',
+                  style: TextStyle(
+                      fontSize: 24
+                  ),
+                ),
               ),
 
               SizedBox(

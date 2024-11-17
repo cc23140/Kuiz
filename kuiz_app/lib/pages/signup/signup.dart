@@ -94,12 +94,17 @@ class Signup extends StatelessWidget {
             'Username',
         ),
         const SizedBox(height: 8,),
-        TextField(
-          controller: _usernameController,
-          decoration: InputDecoration(
-            hintText: 'Crie seu username aqui',
+        SizedBox(
+          width: 325,
+          height: 50,
+          child: TextField(
+            controller: _usernameController,
+            decoration: InputDecoration(
+              hintText: 'Crie seu username aqui',
+            ),
           ),
         )
+
       ],
     );
   }
@@ -113,12 +118,17 @@ class Signup extends StatelessWidget {
           'Email',
         ),
         const SizedBox(height: 8,),
-        TextField(
-          controller: _emailController,
-          decoration: InputDecoration(
+        SizedBox(
+          width: 325,
+          height: 50,
+          child: TextField(
+            controller: _emailController,
+            decoration: InputDecoration(
               hintText: 'Digite seu email aqui',
+            ),
           ),
         )
+
       ],
     );
   }
@@ -132,37 +142,47 @@ class Signup extends StatelessWidget {
           'Senha',
         ),
         const SizedBox(height: 8,),
-        TextField(
-          controller: _passwordController,
-          obscureText: true,
-          decoration: InputDecoration(
-            hintText: 'Crie sua senha aqui'
+        SizedBox(
+          width: 325,
+          height: 50,
+          child: TextField(
+            controller: _passwordController,
+            obscureText: true,
+            decoration: InputDecoration(
+                hintText: 'Crie sua senha aqui'
+            ),
           ),
         )
+
       ],
     );
   }
 
   Widget _signup(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () async {
-        bool? response = await AuthService().signup(
-            email: _emailController.text,
-            password: _passwordController.text,
-            context: context
-        );
-        if(response == null) {
-          return;
-        }
+    return SizedBox(
+      width: 200,
+      height: 50,
+      child: ElevatedButton(
 
-        _databaseService.addUser(UserKuiz(uid: FirebaseAuth.instance.currentUser!.uid,
-            username: _usernameController.text,
-            email: FirebaseAuth.instance.currentUser!.email!,
-            completedQuizzes: 0));
+        onPressed: () async {
+          bool? response = await AuthService().signup(
+              email: _emailController.text,
+              password: _passwordController.text,
+              context: context
+          );
+          if(response == null) {
+            return;
+          }
 
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
-      },
-      child: Text("Cadastrar"),
+          _databaseService.addUser(UserKuiz(uid: FirebaseAuth.instance.currentUser!.uid,
+              username: _usernameController.text,
+              email: FirebaseAuth.instance.currentUser!.email!,
+              completedQuizzes: 0));
+
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        },
+        child: Text("Cadastrar"),
+      ),
     );
   }
 
