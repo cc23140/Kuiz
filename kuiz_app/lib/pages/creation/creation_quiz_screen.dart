@@ -34,6 +34,7 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
 
   @override
   void initState() {
+    super.initState();
     _linkImgController.text = DEFAULT_IMAGE_URL;
     quizCode = List.generate(6, (index)=> _chars[_random.nextInt(_chars.length)]).join();
   }
@@ -111,7 +112,7 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
                       });
 
                     },
-                        style: isPublic ? ButtonStyle(padding: WidgetStatePropertyAll(EdgeInsets.all(5)), backgroundColor: WidgetStateProperty.all(Colors.blue[700]), foregroundColor: WidgetStatePropertyAll(Colors.white),) : ButtonStyle(foregroundColor: WidgetStatePropertyAll(Colors.black), backgroundColor: WidgetStatePropertyAll(Colors.white),padding: WidgetStatePropertyAll(EdgeInsets.all(5))),
+                        style: isPublic ? ButtonStyle(padding: WidgetStatePropertyAll(EdgeInsets.all(5)), backgroundColor: WidgetStateProperty.all(Color(0xff0D6EFD)), foregroundColor: WidgetStatePropertyAll(Colors.white),) : ButtonStyle(foregroundColor: WidgetStatePropertyAll(Colors.black), backgroundColor: WidgetStatePropertyAll(Colors.white),padding: WidgetStatePropertyAll(EdgeInsets.all(5))),
                         child: const Text('Público')),),
 
                   Container(margin: EdgeInsets.all(10),
@@ -120,7 +121,7 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
                         isPublic = false;
                       });
                     },
-                        style: isPublic ? ButtonStyle(foregroundColor: WidgetStatePropertyAll(Colors.black), backgroundColor: WidgetStatePropertyAll(Colors.white),padding: WidgetStatePropertyAll(EdgeInsets.all(5))) : ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.blue), foregroundColor: WidgetStatePropertyAll(Colors.white),padding: WidgetStatePropertyAll(EdgeInsets.all(5))),
+                        style: isPublic ? ButtonStyle(foregroundColor: WidgetStatePropertyAll(Colors.black), backgroundColor: WidgetStatePropertyAll(Colors.white),padding: WidgetStatePropertyAll(EdgeInsets.all(5))) : ButtonStyle(backgroundColor: WidgetStatePropertyAll(Color(0xff0D6EFD)), foregroundColor: WidgetStatePropertyAll(Colors.white),padding: WidgetStatePropertyAll(EdgeInsets.all(5))),
                         child: const Text('Privado')),
                   )
                 ],
@@ -157,11 +158,15 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
                         child: Column(
                           children: [
                             ListTile(
-                              title: Text('${index + 1}. ${questions[index].name}'),
+                              title: Text('${index + 1}. ${questions[index].name}', style: TextStyle(fontWeight: FontWeight.bold),),
                             ),
-                            ...currentQuestion.alternatives!.map((alternative){
+                            ...currentQuestion.alternatives.map((alternative){
                               return ListTile(
-                                title: Text(alternative.name),
+                                title: Align(
+                                  alignment: Alignment.center,
+                                  child: Text('Alternativa: ${alternative.name}'),
+                                ),
+                                trailing: alternative.isCorrect? Icon(Icons.check, color: Colors.green[400],) : const Icon(Icons.close, color: Colors.redAccent,),
                               );
                             })
                           ],
@@ -180,7 +185,7 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
                       await Navigator.push(context, MaterialPageRoute(builder: (context)=>CreationQuestionScreen(questions: questions)))
                           .then((_)=>setState(() {}));
                     },
-                    style: ButtonStyle(shape: WidgetStatePropertyAll(CircleBorder())),
+                    style: ButtonStyle(shape: WidgetStatePropertyAll(CircleBorder()), backgroundColor: WidgetStatePropertyAll(Color(0xff0D6EFD)), foregroundColor: WidgetStatePropertyAll(Colors.white)),
                     icon: const Icon(Icons.add)),
               ),
             ),
@@ -194,20 +199,24 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
                         if(!(await isValidUrl(_linkImgController.text))){
                           _linkImgController.text = DEFAULT_IMAGE_URL;
                         }
-                        _databaseService.addQuiz(
-                            Quiz(
-                                quizId: '',
-                                uid: FirebaseAuth.instance.currentUser!.uid,
-                                title: _titleController.text,
-                                image: _linkImgController.text,
-                                public: isPublic,
-                                questionsAmount: questions.length,
-                                shareCode: quizCode
-                            ),
-                          questions
-                        )
-                        .then((_){Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeScreen()));})
-                        ;
+                        if(_titleController.text.length >= 25){
+                          _databaseService.addQuiz(
+                              Quiz(
+                                  quizId: '',
+                                  uid: FirebaseAuth.instance.currentUser!.uid,
+                                  title: _titleController.text,
+                                  image: _linkImgController.text,
+                                  public: isPublic,
+                                  questionsAmount: questions.length,
+                                  shareCode: quizCode
+                              ),
+                              questions
+                          )
+                              .then((_){Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeScreen()));});
+                        }
+                        else{
+                          //Avisar ao usuário sobre o mínimo de caracteres no título
+                        }
                       }
                     },
                     child: Text('Criar Kuiz')

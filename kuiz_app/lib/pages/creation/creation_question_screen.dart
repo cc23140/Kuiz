@@ -38,11 +38,13 @@ class _CreationQuestionScreenState extends State<CreationQuestionScreen> {
       body: SafeArea(
           child: Column(
             children: [
-              Text(widget.questionIndex.toString()),
               SizedBox(
                 width: MediaQuery.sizeOf(context).width * 0.7,
                 child: TextField(
                   controller: questionController,
+                  decoration: InputDecoration(
+                    hintText: 'Digite aqui a pergunta'
+                  ),
                   onChanged: (text){
                     currentQuestion.name = text;
                   },
@@ -93,7 +95,7 @@ class _CreationQuestionScreenState extends State<CreationQuestionScreen> {
                        },
                        child: ListTile(
                          title: Text(alternative.name),
-                         trailing: alternative.isCorrect ? const Icon(Icons.check) : const Icon(Icons.close),
+                         trailing: alternative.isCorrect ? Icon(Icons.check, color: Colors.green[400],) : const Icon(Icons.close, color: Colors.redAccent,),
                        ),
                      )
                  );
@@ -102,7 +104,9 @@ class _CreationQuestionScreenState extends State<CreationQuestionScreen> {
               ),
               Align(
                 alignment: AlignmentDirectional.bottomEnd,
-                child: IconButton(
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: IconButton(
                     onPressed: () async{
                       if(widget.questionIndex != null){
                         widget.questions.removeAt(widget.questionIndex!);
@@ -126,8 +130,11 @@ class _CreationQuestionScreenState extends State<CreationQuestionScreen> {
                         })
                         ).then((_){setState(() {});});
                       }
-
-                }, icon: const Icon(Icons.add)),
+                    },
+                    style: ButtonStyle(shape: WidgetStatePropertyAll(CircleBorder()), backgroundColor: WidgetStatePropertyAll(Color(0xff0D6EFD)), foregroundColor: WidgetStatePropertyAll(Colors.white)),
+                    icon: const Icon(Icons.add),
+                  ),
+                )
               )
             ],
           )

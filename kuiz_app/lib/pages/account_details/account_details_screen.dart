@@ -33,7 +33,16 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: EdgeInsets.all(10),
+            child: const Text('Informações da Conta', style: TextStyle(color: Color(0xff0D6EFD)),),
+          ),
+        ),
+        leading: IconButton(onPressed: (){Navigator.pop(context);}, icon: Icon(Icons.arrow_back), color: Color(0xff0D6EFD),),
+      ),
       body: FutureBuilder(future: _databaseService.getUser(uid: uid),
               builder: (context, snapshot){
                 if(snapshot.connectionState == ConnectionState.waiting) {
@@ -50,16 +59,49 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(currentUser.email),
-                    TextField(
-                      controller: usernameController,
-                      readOnly: isReadOnly,
-                      decoration: InputDecoration(
-                        suffixIcon: IconButton(
-                            onPressed: ()=>setState(()=>isReadOnly = !isReadOnly),
-                            icon: isReadOnly ? const Icon(Icons.edit) : const Icon(Icons.cancel)
-                        )
+                    Divider(
+                      height: 10,
+                      color: Colors.grey,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20, 5, 0, 3),
+                      child: Text('Conta cadastrada:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20, 5, 0, 0),
+                      child: Text(currentUser.email, style: TextStyle(fontSize: 16),),
+                    ),
+                    Divider(
+                      height: 10,
+                      color: Colors.grey,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20, 5, 0, 3),
+                      child: Text('Username:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
+                      child: TextField(
+                        controller: usernameController,
+                        readOnly: isReadOnly,
+                        decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                                onPressed: ()=>setState(()=>isReadOnly = !isReadOnly),
+                                icon: isReadOnly ? const Icon(Icons.edit) : const Icon(Icons.cancel, color: Colors.redAccent,)
+                            )
+                        ),
                       ),
+                    ),
+                    Divider(
+                      height: 30,
+                      color: Colors.grey,
+                    ),
+                    Align(
+                      alignment: Alignment.center,
+                      child: ElevatedButton(onPressed: (){
+                        //Salvar alteracoes do nome de usuário
+                      },
+                          child: const Text('Salvar Alterações')),
                     )
                   ],
                 );
