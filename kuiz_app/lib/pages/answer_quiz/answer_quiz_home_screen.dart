@@ -19,8 +19,14 @@ class _AnswerQuizHomeScreenState extends State<AnswerQuizHomeScreen> {
 
   void loadQuiz() async{
     selectedQuiz = (await _databaseService.getQuiz(quizId: widget.quizId))!;
+    await loadQuestions();
     setState(() {});
     
+  }
+
+  Future<void> loadQuestions() async{
+    final questions = await _databaseService.getQuestions(selectedQuiz!.quizId);
+    selectedQuiz!.questions = questions;
   }
 
   @override
@@ -32,27 +38,74 @@ class _AnswerQuizHomeScreenState extends State<AnswerQuizHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return selectedQuiz == null ? Container() : Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
+      appBar: AppBar(
+        leading: IconButton(onPressed: (){ Navigator.pop(context);}, icon: const Icon(Icons.arrow_back, color: Colors.blue,)),
+        title: const Text('Informações do Quiz', style: TextStyle(color: Colors.blue),),
+      ),
+      body: Container(
+        height: MediaQuery.of(context).size.height * 0.7,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Divider(
+              height: 2,
+            ),
             Container(
               child: Image.network(selectedQuiz!.image),
             ),
             Container(
-              child: Text(selectedQuiz!.title),
+              child: Padding(
+                  padding: EdgeInsets.all(15),
+                  child: Text(
+                    selectedQuiz!.title,
+                    style: TextStyle(
+                        fontSize: 20
+                    ),
+                  )
+              ),
             ),
-            Container(
-              child: Text('Número de questões: ${selectedQuiz!.questionsAmount}'),
+            Padding(
+                padding: EdgeInsets.fromLTRB(15, 0, 0, 5),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    child: Text('Número de questões: ${selectedQuiz!.questionsAmount}'),
+                  ),
+                )
             ),
-          Container(
-            child: TextButton(
-                onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>AnswerQuizScreen(currentIndex: 0, quizId: widget.quizId))),
-                child: const Text('Iniciar Kuiz!')
+            Padding(
+                padding: EdgeInsets.fromLTRB(15, 0, 0, 5),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    children: [
+                      const Text('Código de Compartilhamento: '),
+                      Text(selectedQuiz!.shareCode, style: TextStyle(color: Colors.blueGrey),)
+                    ],
+                  )
+                )
             ),
-          )
-        ],
-      ),
+            Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: EdgeInsets.all(50),
+                  child: ElevatedButton(
+                      onPressed: () async{
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder:
+                              (context) =>
+                              AnswerQuizScreen(currentIndex: 0,
+                                questions: selectedQuiz!.questions,
+                                score: 0,)
+                            )
+                          );
+                      },
+                      child: const Text('Iniciar Kuiz!')
+                  ),
+                )
+            )
+          ],
+        ),
+      )
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kuiz_app/models/question_model.dart';
 import 'package:kuiz_app/pages/creation/creation_question_screen.dart';
+import 'package:kuiz_app/pages/home/home_screen.dart';
 import 'package:kuiz_app/services/database_service.dart';
 import '../../models/quiz_model.dart';
 import 'package:http/http.dart' as http;
@@ -86,7 +87,6 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
                     width: MediaQuery.sizeOf(context).width * 0.8,
                     child: TextField(
                       enabled: false,
-                      controller: _linkImgController,
                       decoration: InputDecoration(
                           label: Text(quizCode, style: TextStyle()),
                           border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -105,22 +105,22 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(margin: EdgeInsets.all(10),
-                    child: TextButton(onPressed: (){
+                    child: ElevatedButton(onPressed: (){
                       setState(() {
                         isPublic = true;
                       });
 
                     },
-                        style: isPublic ? ButtonStyle(padding: WidgetStatePropertyAll(EdgeInsets.all(5)), backgroundColor: WidgetStateProperty.all(Colors.blue[700]), foregroundColor: WidgetStatePropertyAll(Colors.white),) : ButtonStyle(foregroundColor: WidgetStatePropertyAll(Colors.black), padding: WidgetStatePropertyAll(EdgeInsets.all(5))),
+                        style: isPublic ? ButtonStyle(padding: WidgetStatePropertyAll(EdgeInsets.all(5)), backgroundColor: WidgetStateProperty.all(Colors.blue[700]), foregroundColor: WidgetStatePropertyAll(Colors.white),) : ButtonStyle(foregroundColor: WidgetStatePropertyAll(Colors.black), backgroundColor: WidgetStatePropertyAll(Colors.white),padding: WidgetStatePropertyAll(EdgeInsets.all(5))),
                         child: const Text('Público')),),
 
                   Container(margin: EdgeInsets.all(10),
-                    child: TextButton(onPressed: (){
+                    child: ElevatedButton(onPressed: (){
                       setState(() {
                         isPublic = false;
                       });
                     },
-                        style: isPublic ? ButtonStyle(foregroundColor: WidgetStatePropertyAll(Colors.black), padding: WidgetStatePropertyAll(EdgeInsets.all(5))) : ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.blue[700]), foregroundColor: WidgetStatePropertyAll(Colors.white), padding: WidgetStatePropertyAll(EdgeInsets.all(5))),
+                        style: isPublic ? ButtonStyle(foregroundColor: WidgetStatePropertyAll(Colors.black), backgroundColor: WidgetStatePropertyAll(Colors.white),padding: WidgetStatePropertyAll(EdgeInsets.all(5))) : ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.blue), foregroundColor: WidgetStatePropertyAll(Colors.white),padding: WidgetStatePropertyAll(EdgeInsets.all(5))),
                         child: const Text('Privado')),
                   )
                 ],
@@ -159,7 +159,7 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
                             ListTile(
                               title: Text('${index + 1}. ${questions[index].name}'),
                             ),
-                            ...currentQuestion.alternatives.map((alternative){
+                            ...currentQuestion.alternatives!.map((alternative){
                               return ListTile(
                                 title: Text(alternative.name),
                               );
@@ -188,7 +188,7 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: const EdgeInsets.all(10),
-                child: TextButton(
+                child: ElevatedButton(
                     onPressed: () async{
                       if(questions.length >= 1){
                         if(!(await isValidUrl(_linkImgController.text))){
@@ -205,7 +205,9 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
                                 shareCode: quizCode
                             ),
                           questions
-                        );
+                        )
+                        .then((_){Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeScreen()));})
+                        ;
                       }
                     },
                     child: Text('Criar Kuiz')
@@ -225,7 +227,7 @@ class _CreationQuizScreenState extends State<CreationQuizScreen> {
       //Verifica se de fato é uma imagem passada como URL
       if (response.statusCode == 200 &&
         response.headers['content-type'] != null &&
-        response.headers['content-type']!.startsWith('/image')){
+        response.headers['content-type']!.startsWith('image/')){
         return true;
       }
       return false;

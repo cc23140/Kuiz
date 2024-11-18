@@ -20,8 +20,8 @@ class _CreationAlternativeScreenState extends State<CreationAlternativeScreen> {
   void initState() {
     super.initState();
     if(widget.alternativeIndex != null) {
-      alternativeController.text = widget.question.alternatives[widget.alternativeIndex!].name;
-      isCorrect = widget.question.alternatives[widget.alternativeIndex!].isCorrect;
+      alternativeController.text = widget.question.alternatives![widget.alternativeIndex!].name;
+      isCorrect = widget.question.alternatives![widget.alternativeIndex!].isCorrect;
     }
   }
   @override
@@ -65,11 +65,11 @@ class _CreationAlternativeScreenState extends State<CreationAlternativeScreen> {
                    child: ElevatedButton(
                        onPressed:(){
                          if(widget.alternativeIndex != null){
-                           widget.question.alternatives.removeAt(widget.alternativeIndex!);
-                           widget.question.alternatives.insert(widget.alternativeIndex!, Alternative(alternativeId: '', questionId: '', name: alternativeController.text, isCorrect: isCorrect));
+                           widget.question.alternatives!.removeAt(widget.alternativeIndex!);
+                           widget.question.alternatives!.insert(widget.alternativeIndex!, Alternative(alternativeId: '', questionId: '', name: alternativeController.text, isCorrect: isCorrect));
                          }
                          else{
-                           widget.question.alternatives.add(Alternative(alternativeId: '', questionId: '', name: alternativeController.text, isCorrect: isCorrect));
+                           widget.question.alternatives!.add(Alternative(alternativeId: '', questionId: '', name: alternativeController.text, isCorrect: isCorrect));
                          }
                          Navigator.pop(context);
                        },

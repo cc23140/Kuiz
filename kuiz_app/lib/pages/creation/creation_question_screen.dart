@@ -81,7 +81,9 @@ class _CreationQuestionScreenState extends State<CreationQuestionScreen> {
                            ).then((_)=>setState(() {}));
                          }
                          else{
-                           widget.questions.add(currentQuestion);
+                           if(currentQuestion.alternatives.length < 2){
+                             widget.questions.add(currentQuestion);
+                           }
                            await Navigator.push(context,
                                MaterialPageRoute(builder:
                                    (context)=>CreationAlternativeScreen(question: widget.questions.last, alternativeIndex: index,)
@@ -108,7 +110,7 @@ class _CreationQuestionScreenState extends State<CreationQuestionScreen> {
                         await Navigator.push(context, MaterialPageRoute(builder: (context){
                           return CreationAlternativeScreen(question: widget.questions[widget.questionIndex!]);
                         })
-                        ).then((_){setState(() {});});
+                        ).then((_)=>setState(() {}));
                       }
                       else if(widget.isQuestionCreated == false){
                         widget.isQuestionCreated = true;
@@ -116,7 +118,7 @@ class _CreationQuestionScreenState extends State<CreationQuestionScreen> {
                         await Navigator.push(context, MaterialPageRoute(builder: (context){
                           return CreationAlternativeScreen(question: widget.questions.last);
                         })
-                        ).then((_){setState(() {});});
+                        ).then((_)=>setState(() {}));
                       }
                       else{
                         await Navigator.push(context, MaterialPageRoute(builder: (context){

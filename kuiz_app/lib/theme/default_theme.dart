@@ -61,6 +61,9 @@ final ThemeData defaultTheme = ThemeData(
 
     cursorColor: preferredColor
   ),
+  progressIndicatorTheme: ProgressIndicatorThemeData(
+    color: Colors.blue
+  ),
 
   //ElevatedButtonTheme
   elevatedButtonTheme: ElevatedButtonThemeData(

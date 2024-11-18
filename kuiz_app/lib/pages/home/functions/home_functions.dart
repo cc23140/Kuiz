@@ -3,6 +3,7 @@ import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:kuiz_app/models/card_info.dart";
 import "package:kuiz_app/pages/account_details/account_details_screen.dart";
+import "package:kuiz_app/pages/answer_quiz/answer_quiz_home_screen.dart";
 import "package:kuiz_app/pages/answer_quiz/answer_quiz_screen.dart";
 import "package:kuiz_app/pages/home/home_screen.dart";
 import "package:kuiz_app/pages/home/search_screen.dart";
@@ -228,9 +229,12 @@ class HomeScreenFunctions {
                 color: Colors.grey,
                 thickness: 0.5,
               ),
-              const ListTile(
-                title: Text('Acessar quiz'),
-                trailing: Icon(Icons.code),
+              ListTile(
+                title: const Text('Acessar quiz'),
+                onTap: (){
+                  buildDialog(context);
+                },
+                trailing: const Icon(Icons.code),
               ),
               const Divider(
                 color: Colors.grey,
@@ -247,6 +251,50 @@ class HomeScreenFunctions {
               )
             ]
         )
+    );
+  }
+
+  static void buildDialog(BuildContext context){
+    final _databaseService = DatabaseService();
+    final acessCodeController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Container(
+            padding: EdgeInsets.all(20),
+            height: 300,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Expanded(
+                  flex: 2,
+                    child: Text(
+                      'Código de Compartilhamento',
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    )
+                ),
+                Expanded(flex: 1,child: TextField(controller: acessCodeController, decoration: const InputDecoration(hintText: 'Digite aqui o código de acesso'),)),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () async{
+                    await _databaseService.getQuizByCode(shareCode: acessCodeController.text)
+                    .then((quiz){
+                      if(quiz != null){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>AnswerQuizHomeScreen(quizId: quiz.quizId)));
+                      }
+                    });
+                  },
+                  child: const Text('Acessar Quiz'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -14,9 +14,17 @@ class Question{
   Question copyWith({
     String? name,
     String? quizId,
-    String? questionId
+    String? questionId,
   }){
     return Question(questionId: questionId ?? this.questionId, name: name ?? this.name, quizId: quizId ?? this.quizId);
+  }
+
+  List<Alternative> getAlternatives(){
+    return alternatives;
+  }
+
+  void setAlternatives(List<Alternative> alternatives){
+    this.alternatives = alternatives;
   }
 
   Map<String, dynamic> toJSON(){

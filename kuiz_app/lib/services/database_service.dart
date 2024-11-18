@@ -70,30 +70,44 @@ class DatabaseService {
 
 
   //QUIZ
-  void addQuiz(Quiz quiz, List<Question> questions) async{
+  Future<void> addQuiz(Quiz quiz, List<Question> questions) async{
     final _chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     final _random = Random();
     String quizId = List.generate(20, (index)=> _chars[_random.nextInt(_chars.length)]).join();
     quiz = quiz.copyWith(quizId: quizId);
     _quizzesRef.add(quiz);
-    questions.forEach((question){
+    for (var question in questions) {
       String questionId = List.generate(26, (index)=> _chars[_random.nextInt(_chars.length)]).join();
-      question = question.copyWith(quizId: quizId,questionId: questionId);
+      final questionAlternatives = question.getAlternatives();
+      question = question.copyWith(quizId: quizId, questionId: questionId);
+      question.setAlternatives(questionAlternatives);
       _questionsRef.add(question);
 
-      question.alternatives.forEach((alternative){
+
+      for (var alternative in question.alternatives!) {
         String alternativeId = List.generate(28, (index)=> _chars[_random.nextInt(_chars.length)]).join();
         alternative = alternative.copyWith(questionId: questionId, alternativeId: alternativeId);
         _alternativesRef.add(alternative);
-      });
-    });
+      }
+    }
   }
 
   Future<List<Question>> getQuestions(String quizId) async{
     Stream<QuerySnapshot> querySnapshots = _questionsRef.where('quizId', isEqualTo: quizId).snapshots();
     QuerySnapshot snapshot = await querySnapshots.first;
     return snapshot.docs.map((doc){
-      return doc.data() as Question;
+      Question question = doc.data() as Question;
+      getAlternatives(question.questionId)
+        .then((alternatives)=>question.setAlternatives(alternatives));
+      return question;
+    }).toList();
+  }
+  
+  Future<List<Alternative>> getAlternatives(String questionId) async{
+    Stream<QuerySnapshot> querySnapshots = _alternativesRef.where('questionId', isEqualTo: questionId).snapshots();
+    QuerySnapshot snapshot = await querySnapshots.first;
+    return snapshot.docs.map((doc){
+      return doc.data() as Alternative;
     }).toList();
   }
 
@@ -122,14 +136,9 @@ class DatabaseService {
     final querySnapshots = await _quizzesRef.where('shareCode', isEqualTo: shareCode).get();
 
     if(querySnapshots.docs.isNotEmpty){
-      return querySnapshots.docs.first as Quiz;
+      return querySnapshots.docs.first.data() as Quiz;
     }
   }
-  
-  
-  //QUESTION
-  Stream<QuerySnapshot?> getQuestionsByQuizId({required String quizId}){
-    return _questionsRef.where('quizId', isEqualTo: quizId).snapshots();
-  }
+
 
 }
